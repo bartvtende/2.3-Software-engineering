@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="leertaak1Calculator/src"/>
+	<classpathentry kind="src" path="leertaak1MvcDemo/src"/>
+	<classpathentry kind="src" path="leertaak2Classifier/src"/>
+	<classpathentry kind="src" path="leertaak2GetalRij"/>
+	<classpathentry kind="src" path="leertaak3Cards/src"/>
+	<classpathentry kind="src" path="leertaak3DynamicProgramming/src"/>
+	<classpathentry kind="src" path="leertaak3FileCompressie/src"/>
+	<classpathentry kind="src" path="leertaak3FileCompressie/test"/>
+	<classpathentry kind="src" path="leertaak3TicTacToe/src"/>
+	<classpathentry kind="src" path="leertaak4MobileRobot/src"/>
+	<classpathentry kind="lib" path="leertaak6StrategicGameServer/gamemodule-1.0.jar"/>
+	<classpathentry kind="lib" path="leertaak6StrategicGameServer/gamemodules/GuessGame.jar"/>
+	<classpathentry kind="lib" path="leertaak6StrategicGameServer/gamemodules/GuessGameDeluxe.jar"/>
+	<classpathentry kind="lib" path="leertaak6StrategicGameServer/gamemodules/UltraGuessGame.jar"/>
+	<classpathentry kind="lib" path="leertaak6StrategicGameServer/StrategicGameServer-1.0.jar"/>
+	<classpathentry kind="lib" path="leertaak6StrategicGameServer/StrategicGameServer-1.0.src.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
