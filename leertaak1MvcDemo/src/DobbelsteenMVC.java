@@ -10,7 +10,7 @@ public class DobbelsteenMVC extends JApplet
 	
 	public void init()
 	{
-		resize(450,400);
+		resize(350,400);
         
 		// Maak het model
 		model = new DobbelsteenModel();
