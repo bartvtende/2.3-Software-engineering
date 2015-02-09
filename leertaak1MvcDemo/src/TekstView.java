@@ -18,7 +18,7 @@ public class TekstView extends JPanel implements ActionListener
 	public void actionPerformed( ActionEvent e )
 	{
 	    d = (DobbelsteenModel) e.getSource();
-	    steenRoodVeld.setText(""+d.getWaarde());
+		steenRoodVeld.setText("" + d.getWaarde());
 	}
 	
 	public Dimension getPreferredSize()

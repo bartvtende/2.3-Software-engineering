@@ -1,16 +1,19 @@
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+
+import javax.swing.JApplet;
 
 public class DobbelsteenMVC extends JApplet
 {
-	DobbelsteenModel model;             //het model
-	TekstView tekstView;              // view
-	DobbelsteenView dobbelsteenView;  // view
-	DobbelsteenController controller;             // Controller
+	DobbelsteenModel model;             // Model
+	TekstView tekstView;              	// View
+	DobbelsteenView dobbelsteenView;  	// View
+	StatisticsView statisticsView;    	// View
+	DobbelsteenController controller;   // Controller
 	
 	public void init()
 	{
-		resize(450,400);
+		resize(250,200);
         
 		// Maak het model
 		model = new DobbelsteenModel();
@@ -27,10 +30,14 @@ public class DobbelsteenMVC extends JApplet
         tekstView = new TekstView();
         tekstView.setBackground(Color.green);
         getContentPane().add(tekstView,BorderLayout.SOUTH);
+        statisticsView = new StatisticsView();
+        statisticsView.setBackground(Color.yellow);
+        getContentPane().add(statisticsView, BorderLayout.EAST);
         
         // Registreer de views bij het model
         model.addActionListener(tekstView);
         model.addActionListener(dobbelsteenView);
+        model.addActionListener(statisticsView);
         
         // Eerste worp
         model.gooi();
