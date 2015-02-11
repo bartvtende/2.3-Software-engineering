@@ -13,19 +13,15 @@ public class DobbelsteenMVC extends JApplet
 	
 	public void init()
 	{
-<<<<<<< HEAD
-		resize(250,200);
-=======
 		resize(350,400);
->>>>>>> 90ff733d02cefcb98bbfbe70def9ad8768f5005e
-        
+		
 		// Maak het model
 		model = new DobbelsteenModel();
         
         // Maak de controller en geef hem het model
 		controller = new DobbelsteenController(model);
         controller.setBackground(Color.cyan);
-        getContentPane().add(controller,BorderLayout.NORTH);
+        getContentPane().add(controller, BorderLayout.NORTH);
         
         // Maak de views
         dobbelsteenView = new DobbelsteenView(Color.red);
@@ -35,7 +31,6 @@ public class DobbelsteenMVC extends JApplet
         tekstView.setBackground(Color.green);
         getContentPane().add(tekstView,BorderLayout.SOUTH);
         statisticsView = new StatisticsView();
-        statisticsView.setBackground(Color.yellow);
         getContentPane().add(statisticsView, BorderLayout.EAST);
         
         // Registreer de views bij het model

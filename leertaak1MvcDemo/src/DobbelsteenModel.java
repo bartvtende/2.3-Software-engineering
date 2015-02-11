@@ -8,7 +8,7 @@ import java.util.Stack;
 public class DobbelsteenModel {
 	private int waarde;
 	private ArrayList<ActionListener> actionListenerList = new ArrayList<ActionListener>();
-	private Stack<String> throwHistory = new Stack<String>();
+	private ArrayList<String> throwHistory = new ArrayList<String>();
 
 	public DobbelsteenModel() {
 		waarde = (int) (Math.random() * 6 + 1);
@@ -18,7 +18,7 @@ public class DobbelsteenModel {
 		return waarde;
 	}
 
-	public Stack<String> getWaarden() {
+	public ArrayList<String> getWaarden() {
 		return throwHistory;
 	}
 
