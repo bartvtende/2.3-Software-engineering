@@ -127,10 +127,17 @@ public class Rational {
      * @param other Another Rational to add to this.
      * @return A new Rational representing the multiplication.
      */
-    public Rational mul(Rational other) {
-        return new Rational(
-                numerator * other.numerator,
-                denominator * other.denominator);
+    public Rational mul(Rational o) {
+        try {
+            if (o.numerator == 0 || o.denominator == 0)
+                throw new DivisionException("Cannot divide by zero.");
+            return new Rational(
+                    numerator * o.numerator,
+                    denominator * o.denominator);
+        } catch (DivisionException e) {
+            System.out.println("Division Exception: " + e.getMessage());
+            return new Rational();
+        }
     }
 
     /**
