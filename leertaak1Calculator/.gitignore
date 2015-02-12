@@ -1,1 +1,7 @@
-/bin/out
+/bin
+/out
+/.idea
+.project
+.classpath
+leertaak1Calculator.iml
+*.class
