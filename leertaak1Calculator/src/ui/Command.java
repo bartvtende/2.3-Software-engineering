@@ -17,8 +17,19 @@
  * 02111-1307  USA
  */
 package ui;
-import multiformat.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import multiformat.BinaryBase;
+import multiformat.Calculator;
+import multiformat.DecimalBase;
+import multiformat.FixedPointFormat;
+import multiformat.FloatingPointFormat;
+import multiformat.FormatException;
+import multiformat.HexBase;
+import multiformat.RationalFormat;
 
 /**
  * De main-klasse die leest en schrijft naar de console.
@@ -31,6 +42,11 @@ public class Command {
   BufferedReader prevReader=null;
   BufferedReader lineReader = new  BufferedReader( new InputStreamReader( System.in ) );
 
+  public static void main(String[] args) {
+    Command command = new Command();
+    while(command.nextCommand());
+  }
+  
   boolean nextCommand() {
     System.out.print("\n["+calc.getBase().getName()+","
                             + calc.getFormat().getName()+","
@@ -107,11 +123,6 @@ public class Command {
     System.out.println("  help         (print this command list)");
     System.out.println("  exit         (terminate execution)");
     System.out.println();
-  }
-
-  public static void main(String[] args) {
-    Command command = new Command();
-    while(command.nextCommand());
   }
 
 }
