@@ -36,6 +36,8 @@ public class TestFormat extends TestCase {
 			assertEquals("0.75",calc.secondOperand());
 			calc.setBase(new BinaryBase());
 			assertEquals("0.11",calc.secondOperand());
+            calc.setBase(new OctalBase());
+            assertEquals("0.6",calc.secondOperand());
 			calc.setBase(new HexBase());
 			assertEquals("0.C",calc.secondOperand());
 
@@ -43,6 +45,8 @@ public class TestFormat extends TestCase {
 			assertEquals("C.0*10^-1.0",calc.secondOperand());
 			calc.setBase(new BinaryBase());
 			assertEquals("1.1*10^-1.0",calc.secondOperand());
+            calc.setBase(new OctalBase());
+            assertEquals("6.0*10^-1.0",calc.secondOperand());
 			calc.setBase(new DecimalBase());
 			assertEquals("7.5*10^-1.0",calc.secondOperand());
 
@@ -50,6 +54,8 @@ public class TestFormat extends TestCase {
 			assertEquals("3.0/4.0",calc.secondOperand());
 			calc.setBase(new BinaryBase());
 			assertEquals("11.0/100.0",calc.secondOperand());
+            calc.setBase(new OctalBase());
+            assertEquals("3.0/4.0",calc.secondOperand());
 			calc.setBase(new HexBase());
 			assertEquals("3.0/4.0",calc.secondOperand());
 		} catch (FormatException e) {
