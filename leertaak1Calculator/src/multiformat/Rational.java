@@ -128,16 +128,9 @@ public class Rational {
      * @return A new Rational representing the multiplication.
      */
     public Rational mul(Rational o) {
-        try {
-            if (o.numerator == 0 || o.denominator == 0)
-                throw new DivisionException("Cannot divide by zero.");
-            return new Rational(
-                    numerator * o.numerator,
-                    denominator * o.denominator);
-        } catch (DivisionException e) {
-            System.out.println("Division Exception: " + e.getMessage());
-            return new Rational();
-        }
+    	return new Rational(
+    		numerator * o.numerator,
+    		denominator * o.denominator);
     }
 
     /**
@@ -147,9 +140,18 @@ public class Rational {
      * @return A new Rational representing the division.
      */
     public Rational div(Rational other) {
-        return new Rational(
-                numerator * other.denominator,
-                denominator * other.numerator);
+    	try {
+    		if (other.numerator == 0 || other.denominator == 0)
+				throw new DivisionException("Cannot divide by zero.");
+				return new Rational(
+		                numerator * other.denominator,
+		                denominator * other.numerator);
+			} catch (DivisionException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Division Exception: " + e.getMessage());
+	            return new Rational();
+			}
+    	
     }
 
     public void copyOf(Rational other) {
