@@ -74,7 +74,10 @@ public class Command {
         	calc.addOperand(command.substring(2).trim());
         }catch(FormatException e){
           System.out.println("Wrong operand: " + e.getMessage());
-        }
+        } catch (NumberBaseException e) {
+			// TODO Auto-generated catch block
+        	System.out.println(e.getMessage());
+		}
       }else if(command.indexOf("read")>=0){
         try{
           BufferedReader file = new  BufferedReader(
