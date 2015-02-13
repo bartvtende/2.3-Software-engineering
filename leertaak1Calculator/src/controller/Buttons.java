@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 
 import multiformat.BinaryBase;
+import multiformat.Calculator;
 import multiformat.DecimalBase;
 import multiformat.FixedPointFormat;
 import multiformat.FloatingPointFormat;
@@ -56,16 +57,21 @@ public class Buttons extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				try {
-					CalculatorFrame.calculator.addOperand(CalculatorFrame.calculatorFrame.getIOPanel().getInput().getText().trim());
+					if(CalculatorFrame.calculatorFrame.getIOPanel().getInput().getText().length()>0){
+						CalculatorFrame.calculator.addOperand(CalculatorFrame.calculatorFrame.getIOPanel().getInput().getText().trim());
+						CalculatorFrame.calculatorFrame.getIOPanel().getInput().setText("");
+						CalculatorFrame.calculatorFrame.getIOPanel().getInput().requestFocus();
+					}
 				} catch (FormatException e1) {
 					new JOptionPane().showMessageDialog(CalculatorFrame.calculatorFrame, e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);;
 				} catch (NumberBaseException e1) {
 					new JOptionPane().showMessageDialog(CalculatorFrame.calculatorFrame, e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);;
 				}
+				setOutput();
 			}
 			
 		});
-		//del TODO
+		//del
 		JButton del = new JButton("del");
 		del.addActionListener(new ActionListener(){
 
@@ -73,6 +79,7 @@ public class Buttons extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				CalculatorFrame.calculator.delete();
+				setOutput();
 			}
 			
 		});
@@ -83,7 +90,8 @@ public class Buttons extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				CalculatorFrame.calculator.setBase(new BinaryBase());;
+				CalculatorFrame.calculator.setBase(new BinaryBase());
+				setOutput();
 			}
 			
 		});
@@ -93,7 +101,8 @@ public class Buttons extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CalculatorFrame.calculator.setBase(new OctalBase());;
+				CalculatorFrame.calculator.setBase(new OctalBase());
+				setOutput();
 			}
 			
 		});
@@ -103,7 +112,8 @@ public class Buttons extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CalculatorFrame.calculator.setBase(new DecimalBase());;
+				CalculatorFrame.calculator.setBase(new DecimalBase());
+				setOutput();
 			}
 			
 		});
@@ -113,7 +123,8 @@ public class Buttons extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CalculatorFrame.calculator.setBase(new HexBase());;
+				CalculatorFrame.calculator.setBase(new HexBase());
+				setOutput();
 			}
 			
 		});
@@ -124,6 +135,9 @@ public class Buttons extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CalculatorFrame.calculator.add();
+				setOutput();
+				CalculatorFrame.calculatorFrame.getCounter().counterUp(1);
+				CalculatorFrame.calculatorFrame.getCounter().updateDisplay();
 			}
 			
 		});
@@ -133,7 +147,10 @@ public class Buttons extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CalculatorFrame.calculator.subtract();;
+				CalculatorFrame.calculator.subtract();
+				setOutput();
+				CalculatorFrame.calculatorFrame.getCounter().counterUp(1);
+				CalculatorFrame.calculatorFrame.getCounter().updateDisplay();
 			}
 			
 		});
@@ -143,7 +160,10 @@ public class Buttons extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CalculatorFrame.calculator.multiply();;
+				CalculatorFrame.calculator.multiply();
+				setOutput();
+				CalculatorFrame.calculatorFrame.getCounter().counterUp(1);
+				CalculatorFrame.calculatorFrame.getCounter().updateDisplay();
 			}
 			
 		});
@@ -154,6 +174,9 @@ public class Buttons extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CalculatorFrame.calculator.divide();
+				setOutput();
+				CalculatorFrame.calculatorFrame.getCounter().counterUp(1);
+				CalculatorFrame.calculatorFrame.getCounter().updateDisplay();
 			}
 			
 		});
@@ -164,6 +187,7 @@ public class Buttons extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CalculatorFrame.calculator.setFormat(new FixedPointFormat());
+				setOutput();
 			}
 			
 		});
@@ -174,6 +198,7 @@ public class Buttons extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CalculatorFrame.calculator.setFormat(new FloatingPointFormat());
+				setOutput();
 			}
 			
 		});
@@ -184,6 +209,7 @@ public class Buttons extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CalculatorFrame.calculator.setFormat(new RationalFormat());
+				setOutput();
 			}
 			
 		});
@@ -218,5 +244,13 @@ public class Buttons extends JPanel {
 		this.add(center);
 		this.add(formatPanel);
 		
+	}
+	
+	public void setOutput(){
+		Calculator calc = CalculatorFrame.calculator;
+		CalculatorFrame.calculatorFrame.getIOPanel().getOutput().setText("\n["+calc.getBase().getName()+","
+                + calc.getFormat().getName()+","
+                + calc.firstOperand() + ", "
+                + calc.secondOperand() + "] >");
 	}
 }
