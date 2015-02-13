@@ -114,5 +114,20 @@ public abstract class Base {
     }
     return result.toString();
   }
+  
+  public void checkForBaseException(String input) throws NumberBaseException{
+	  String[] chars = new String[input.length()];
+	  
+	  //char[] chars = input.toCharArray();
+	  for(int i = 0; i<input.length(); i++){
+		  chars[i] = input.substring(i, i+1);
+	  }
+	  
+	  for(String s : chars){
+		  if(!digits.contains(s)){
+			  throw new NumberBaseException("De ingevoerde getallen komen niet overeen met dit talstelsel. Gebruik alleen: "+digits);
+		  }
+	  }
+  }
 }
 
