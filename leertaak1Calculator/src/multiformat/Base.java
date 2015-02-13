@@ -124,7 +124,7 @@ public abstract class Base {
 	  }
 	  
 	  for(String s : chars){
-		  if(!digits.contains(s)){
+		  if(!digits.contains(s) && !s.equals("*") && !s.equals("^") && !s.equals(".") && !s.equals("/")){
 			  throw new NumberBaseException("De ingevoerde getallen komen niet overeen met dit talstelsel. Gebruik alleen: "+digits);
 		  }
 	  }
