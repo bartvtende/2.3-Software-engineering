@@ -15,4 +15,12 @@ public class IOPanel extends JPanel {
 		output.setEditable(false);
 		this.add(output);
 	}
+	
+	public JTextField getInput(){
+		return input;
+	}
+	
+	public JTextField getOutput(){
+		return output;
+	}
 }

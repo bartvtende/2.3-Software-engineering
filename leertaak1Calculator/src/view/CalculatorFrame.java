@@ -15,15 +15,20 @@ import javax.swing.JTextField;
 
 
 
+
+import multiformat.Calculator;
 import controller.Buttons;
 
 public class CalculatorFrame extends JFrame{
 
 	private Buttons buttons = new Buttons();
 	private IOPanel ioPanel = new IOPanel();
-	
+	public static CalculatorFrame calculatorFrame;
+	public static final Calculator calculator = new Calculator();
 	
 	public CalculatorFrame(){
+		calculatorFrame = this;
+		
 		Container contentPane = this.getContentPane();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
  
@@ -33,6 +38,10 @@ public class CalculatorFrame extends JFrame{
 		//finish up frame
 		this.setVisible(true);
 		this.pack();
+	}
+	
+	public IOPanel getIOPanel(){
+		return ioPanel;
 	}
 	
 	
