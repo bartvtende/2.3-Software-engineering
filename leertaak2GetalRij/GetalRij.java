@@ -86,7 +86,7 @@ public class GetalRij {
 				return true;
 		}
 	}
-
+ 
 	public boolean zitErinD(int zoekWaarde) {
 		return false;
 	}

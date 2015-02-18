@@ -23,9 +23,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * A node of a decision tree representing a feature. 
- * Note that Arc is not implemented as a separate class as shown 
- * in the book on figures 4.4 and 4.6. It is implemented in a simpler way (see  below).
+ * A node of a decision tree representing a feature. Note that Arc is not
+ * implemented as a separate class as shown in the book on figures 4.4 and 4.6.
+ * It is implemented in a simpler way (see below).
  * 
  */
 public class Node {
@@ -36,57 +36,60 @@ public class Node {
 	private String label;
 
 	// This map contains the children of this node.
-	// The key in the map ("yes" or "no" for example) describes a value of 
+	// The key in the map ("yes" or "no" for example) describes a value of
 	// the current feature . For example:
 	// node "Airco" --"yes"--> node "High"
-	//              --"no"---> node "Low"
-	private Map<String, Node> arcs=new HashMap<String, Node>();
+	// --"no"---> node "Low"
+	private Map<String, Node> arcs = new HashMap<String, Node>();
 
 	/**
-	 * @param label For internal nodes this label describes the feature.
-	 *              For external nodes (=leaves at the end of the tree) 
-	 *              this label describes a category.
+	 * @param label
+	 *            For internal nodes this label describes the feature. For
+	 *            external nodes (=leaves at the end of the tree) this label
+	 *            describes a category.
 	 */
 	public Node(String label) {
 		this.label = label;
 	}
 
-	public void addChild(String arcLabel, Node child){
-		arcs.put(arcLabel,child);  
+	public void addChild(String arcLabel, Node child) {
+		arcs.put(arcLabel, child);
 	}
 
-	public boolean isLeaf() { return arcs.size()==0; }
+	public boolean isLeaf() {
+		return arcs.size() == 0;
+	}
 
-	public String getLabel() { return label; }
+	public String getLabel() {
+		return label;
+	}
 
 	public Node follow(String arcLabel) {
-		return (Node)arcs.get(arcLabel);
+		return (Node) arcs.get(arcLabel);
 	}
 
 	/**
 	 * @return A string representation of the tree with this node at the root.
-	 *         For example:
-	 *         [root
-	 *             (to the left)--> [left]
-	 *             (to the right)--> [right]
-	 *         ]
+	 *         For example: [root (to the left)--> [left] (to the right)-->
+	 *         [right] ]
 	 */
-	public String toString(){ return toString(""); }
+	public String toString() {
+		return toString("");
+	}
 
-	private String toString(String indent){
-		String indentStep="    ";
-		StringBuffer buffer=new StringBuffer();
+	private String toString(String indent) {
+		String indentStep = "    ";
+		StringBuffer buffer = new StringBuffer();
 		buffer.append("[").append(label);
-		if(!isLeaf()){
+		if (!isLeaf()) {
 			buffer.append("\n");
-			for (Iterator<String> iter = arcs.keySet().iterator(); iter.hasNext();) {
+			for (Iterator<String> iter = arcs.keySet().iterator(); iter
+					.hasNext();) {
 				String arcLabel = (String) iter.next();
-				Node dest = (Node)arcs.get(arcLabel);
-				buffer.append(indent)
-				.append("  (")
-				.append(arcLabel)
-				.append(")--> ")
-				.append(dest.toString(indent+indentStep));
+				Node dest = (Node) arcs.get(arcLabel);
+				buffer.append(indent).append("  (").append(arcLabel)
+						.append(")--> ")
+						.append(dest.toString(indent + indentStep));
 			}
 			buffer.append(indent);
 		}
