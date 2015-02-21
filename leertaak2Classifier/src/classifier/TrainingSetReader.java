@@ -14,16 +14,7 @@ import java.util.Map;
  * @version 1.0
  *
  */
-public class TrainingSetReader {
-	
-	public static void main(String[] args) {
-		TrainingSetReader test = new TrainingSetReader();
-		
-		DecisionTree tree = test.getDecisionTree();
-		
-		System.out.println(tree);
-	}
-	
+public class TrainingSetReader {	
 	// Paths to the text files
 	private final String TRAININGSET = "./src/test/TrainingSet.txt";
 	private final String OPTIONS = "./src/test/OptiesText.txt";
@@ -40,8 +31,26 @@ public class TrainingSetReader {
     // Create a FeatureType with Yes or No
     private final FeatureType featureType = new FeatureType("YesNo", new String[] { "1", "0" });
     
+    // The DecisionTree object
     private DecisionTree tree;
+    
+
+	/**
+	 * Main class for testing purposes
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		TrainingSetReader test = new TrainingSetReader();
+		
+		DecisionTree tree = test.getDecisionTree();
+		
+		System.out.println(tree);
+	}
 	
+	/**
+	 * Constructor
+	 */
 	public TrainingSetReader() {    	
 		try {
 			// Create new BufferedReader
@@ -62,6 +71,7 @@ public class TrainingSetReader {
 
 	/**
 	 * Getter for the DecisionTree object
+	 * 
 	 * @return
 	 */
 	public DecisionTree getDecisionTree() {
@@ -117,7 +127,7 @@ public class TrainingSetReader {
 	}
 	
 	/**
-	 * 
+	 * Creates a new Item object from the given array
 	 * 
 	 * @param itemProperties
 	 * @return
