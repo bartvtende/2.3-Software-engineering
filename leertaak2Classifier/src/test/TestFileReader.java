@@ -1,10 +1,14 @@
 package test;
-import junit.framework.TestCase;
-import classifier.*;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+
+import junit.framework.TestCase;
+import classifier.*;
 
 public class TestFileReader extends TestCase {
 	private static final String RESULTS_FILE = "OptieText.txt";

@@ -58,6 +58,7 @@ public class TestClassifier extends TestCase {
 
 		radioR2.addChild("yes", l3);
 		radioR2.addChild("no", l4);
+		
 
 		return new DecisionTree(root);
 	}
