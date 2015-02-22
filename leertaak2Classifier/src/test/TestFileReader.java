@@ -11,8 +11,8 @@ import junit.framework.TestCase;
 import classifier.*;
 
 public class TestFileReader extends TestCase {
-	private static final String RESULTS_FILE = "OptieText.txt";
-	private static final String CAT_FILE = "CatText.txt";
+	private static final String RESULTS_FILE = "./src/test/OptiesText.txt";
+	private static final String CAT_FILE = "./src/test/CatText.txt";
 	private ArrayList<Node> optionList = new ArrayList<Node>();
 
 	public TestFileReader(String arg0) {

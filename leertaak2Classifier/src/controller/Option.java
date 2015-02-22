@@ -25,12 +25,12 @@ public class Option extends JPanel {
 	
 	private void buttonSetup(){
 		button.addActionListener(new ActionListener(){
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				Frame.frame.replaceCenter(new Pick(optionText.getText()));
-			}});
+			}
+		});
 	}
 	
 	

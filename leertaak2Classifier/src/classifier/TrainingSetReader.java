@@ -34,20 +34,6 @@ public class TrainingSetReader {
     // The DecisionTree object
     private DecisionTree tree;
     
-
-	/**
-	 * Main class for testing purposes
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		TrainingSetReader test = new TrainingSetReader();
-		
-		DecisionTree tree = test.getDecisionTree();
-		
-		System.out.println(tree);
-	}
-	
 	/**
 	 * Constructor
 	 */

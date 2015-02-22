@@ -7,10 +7,8 @@ import view.Frame;
 public class Start {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		TrainingSetReader test = new TrainingSetReader();
-		
-		DecisionTree tree = test.getDecisionTree();
+		TrainingSetReader reader = new TrainingSetReader();
+		DecisionTree tree = reader.getDecisionTree();
 		
 		Frame frame = new Frame(tree);
 		frame.setVisible(true);
