@@ -97,7 +97,6 @@ public class Node {
 		return buffer.toString();
 	}
 	
-	//because fuck incomplete standard shit.
 	public Map<String, Node> getArcs(){
 		return arcs;
 		

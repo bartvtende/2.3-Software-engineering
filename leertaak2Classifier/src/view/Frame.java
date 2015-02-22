@@ -40,7 +40,6 @@ public class Frame extends JFrame {
 		removeCenter();
 		contentPane.add(comp, BorderLayout.CENTER);
 		this.revalidate();
-		System.out.println(contentPane.getComponentCount());
 	}
 	
 	public JLabel getQuestion(){

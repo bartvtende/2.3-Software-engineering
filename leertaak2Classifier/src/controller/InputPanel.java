@@ -22,13 +22,13 @@ public class InputPanel extends JPanel {
 		node = tree;
 		if(node.isLeaf()){
 			picked =true;
-			System.out.println(node.isLeaf());
+			
 			Frame.frame.replaceCenter(new Pick(node.getLabel()));
 			Frame.frame.getQuestion().setText("");
 		}
 		else{
 			Frame.frame.getQuestion().setText("Heeft de auto "+node.getLabel()+"?");
-			System.out.println(node.isLeaf());
+			
 			createButtons();
 		}
 	}
@@ -54,7 +54,6 @@ public class InputPanel extends JPanel {
 	}
 	*/
 	private void createButtons(){
-		System.out.println("createButtons");
 		for(final String key:node.getArcs().keySet()){
 			String buttonString;
 			if(key.equals("1")){

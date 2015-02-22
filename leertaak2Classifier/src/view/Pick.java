@@ -10,6 +10,5 @@ public class Pick extends JPanel {
 		text.setText("U heeft gekozen voor "+ pick);
 		
 		this.add(text);
-		System.out.println("Picked");
 	}
 }
