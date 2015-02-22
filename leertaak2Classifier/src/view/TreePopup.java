@@ -13,6 +13,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import classifier.DecisionTree;
 import classifier.Node;
@@ -32,14 +33,17 @@ public class TreePopup extends JFrame {
 	    device.setFullScreenWindow(this);
 	    JPanel screen = new JPanel(); //Screen is a JPanel.
 	    this.setPreferredSize(new Dimension((int)tk.getScreenSize().width,(int)tk.getScreenSize().getHeight()));
+	    
 	    screen.setSize(getWidth(), getHeight());
-	    add(screen);
+	    JScrollPane scroll = new JScrollPane(screen);
+	    add(scroll);
 	    printTree(root, screen);
 	    setVisible(true);
 	    Container cp = this.getContentPane();
 	    System.out.println(cp.getWidth()+"()"+cp.getHeight());
 	}
 	
+	//prints a label in middle of given panel.
 	private void printMiddleOfPanel(Node node, JPanel panel){
 		int panelWidth = panel.getWidth();
 		JLabel label = new JLabel(node.getLabel());
@@ -52,6 +56,7 @@ public class TreePopup extends JFrame {
 		//label.setBounds((panelWidth/2)-(labelWidth/2)+insets.left, insets.top, size.width, size.height);	
 	}
 	
+	//recursive print thingy
 	private void printTree(Node root, JPanel mainPanel){
 		Node node = root;
 		if(!node.isLeaf()){
@@ -70,14 +75,15 @@ public class TreePopup extends JFrame {
 			JPanel center = new JPanel();
 			center.setLayout(new BoxLayout(center, BoxLayout.X_AXIS));
 			
-			center.add(p1, BorderLayout.CENTER);
-			center.add(p2, BorderLayout.CENTER);
+			center.add(p1);
+			center.add(p2);
 			
-			mainPanel.add(center, BorderLayout.CENTER);
+			mainPanel.add(center, BorderLayout.SOUTH);
 			
 			printTree(node.follow((String) node.getArcs().keySet().toArray()[0]), p1);
 			printTree(node.follow((String) node.getArcs().keySet().toArray()[1]), p2);
-			
+		
+			System.out.println(p1.getWidth()+"()"+p2.getWidth());
 		}
 	}
 }
