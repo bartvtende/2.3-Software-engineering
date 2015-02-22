@@ -261,5 +261,9 @@ public class DecisionTree implements Classifier {
 		}
 		return -info;
 	}
+	
+	public Node getRoot(){
+		return root;
+	}
 
 }
