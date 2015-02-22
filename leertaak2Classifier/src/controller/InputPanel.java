@@ -56,7 +56,17 @@ public class InputPanel extends JPanel {
 	private void createButtons(){
 		System.out.println("createButtons");
 		for(final String key:node.getArcs().keySet()){
-			JButton button = new JButton(key);
+			String buttonString;
+			if(key.equals("1")){
+				buttonString = "Ja";
+			}
+			else if(key.equals("0")){
+				buttonString = "Nee";
+			}
+			else{
+				buttonString = key;
+			}
+			JButton button = new JButton(buttonString);
 			button.addActionListener(new ActionListener(){
 
 				@Override
