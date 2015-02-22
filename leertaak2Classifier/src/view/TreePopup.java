@@ -9,6 +9,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,17 +55,25 @@ public class TreePopup extends JFrame {
 	private void printTree(Node root, JPanel mainPanel){
 		Node node = root;
 		if(!node.isLeaf()){
-			System.out.println("check");
+			
 			printMiddleOfPanel(root, mainPanel);
 			JPanel p1 = new JPanel();
 			JPanel p2 = new JPanel();
-			Dimension pSize = new Dimension(mainPanel.getWidth()/2,mainPanel.getHeight()-10);
+			Dimension pSize = new Dimension(mainPanel.getWidth()/2,mainPanel.getHeight()-50);
 			
-			p1.setPreferredSize(pSize);
-			p2.setPreferredSize(pSize);
+			System.out.println(mainPanel.getWidth()+"()"+pSize.width+"[]"+mainPanel.getHeight()+"()"+pSize.height);
 			
-			mainPanel.add(p1, BorderLayout.CENTER);
-			mainPanel.add(p2, BorderLayout.CENTER);
+			
+			p1.setSize(pSize);
+			p2.setSize(pSize);
+			
+			JPanel center = new JPanel();
+			center.setLayout(new BoxLayout(center, BoxLayout.X_AXIS));
+			
+			center.add(p1, BorderLayout.CENTER);
+			center.add(p2, BorderLayout.CENTER);
+			
+			mainPanel.add(center, BorderLayout.CENTER);
 			
 			printTree(node.follow((String) node.getArcs().keySet().toArray()[0]), p1);
 			printTree(node.follow((String) node.getArcs().keySet().toArray()[1]), p2);
