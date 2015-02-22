@@ -16,6 +16,7 @@ import classifier.DecisionTree;
 public class TreePopup extends JFrame {
 	final String title = "";
 	static GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
+	Toolkit tk = Toolkit.getDefaultToolkit();
 	
 	public TreePopup(){
 		
@@ -24,10 +25,10 @@ public class TreePopup extends JFrame {
 	    setUndecorated(true);
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    device.setFullScreenWindow(this);
-	    JPanel screen = new JPanel(); //Screen is a JPanel.
-	    this.setPreferredSize(new Dimension(1920,1080));
-	    screen.setSize(getWidth(), getHeight());
-	    add(screen);
+	    //JPanel screen = new JPanel(); //Screen is a JPanel.
+	    this.setPreferredSize(new Dimension((int)tk.getScreenSize().width,(int)tk.getScreenSize().getHeight()));
+	    //screen.setSize(getWidth(), getHeight());
+	    //add(screen);
 	    setVisible(true);
 	    Container cp = this.getContentPane();
 	    System.out.println(cp.getWidth()+"()"+cp.getHeight());
