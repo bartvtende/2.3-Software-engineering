@@ -6,7 +6,7 @@ import java.util.Stack;
 public class Solution extends Stack<Candidate>
 {
     // The board is an 2D array.
-	// 0123
+	//  0123
 	// 0..-.
 	// 1---.
 	// 2.---
@@ -24,6 +24,7 @@ public class Solution extends Stack<Candidate>
 	
 	
 	public Solution(){
+		
 	}
 
 	
@@ -34,7 +35,18 @@ public class Solution extends Stack<Candidate>
 	 // can be used in the methods fits and isCorrect
 	private boolean bordersCard(int row, int column, char cardChar){
 	    //TODO
-		return true;
+		
+		for(int i = -1;i<=1;i++){
+			for(int j = -1; j<=1;j++){
+				if(isValidRow(row+i) && isValidColumn(column+j)){
+					if(cardChar == board[i][j].getCardChar()){
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
     }
 	
 	
@@ -106,6 +118,29 @@ public class Solution extends Stack<Candidate>
      public String toString(){
 	    //TODO
 	    return "";
-	}    
+	}
+     
+     //checks if row is on the the board
+     private boolean isValidRow(int row){
+    	 if(row<0){
+    		 return false;
+    	 }
+    	 if(row>=board.length){
+    		 return false;
+    	 }
+    	 return true;
+     }
 
+     //checks if column is on the the board
+     private boolean isValidColumn(int column){
+    	 if(column<0){
+    		 return false;
+    	 }
+    	 if(board.length>0){
+    		 if(column>=board[0].length){
+    			 return false;
+    		 }
+    	 }
+    	 return true;
+     }
 }
