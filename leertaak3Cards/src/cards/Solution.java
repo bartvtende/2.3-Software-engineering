@@ -45,7 +45,7 @@ public class Solution extends Stack<Candidate>
 				return true;
 			}
 		}
-		if(isValidColumn(column+1)){
+		if(isValidColumn(column-1)){
 			if(cardChar == board[row][column-1].getCardChar()){
 				return true;
 			}
@@ -68,6 +68,7 @@ public class Solution extends Stack<Candidate>
 	 */
 	public boolean fits(Candidate candidate){ 
 		//TODO
+		
 	    return true;
     }
 
