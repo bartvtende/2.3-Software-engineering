@@ -35,17 +35,26 @@ public class Solution extends Stack<Candidate>
 	 // can be used in the methods fits and isCorrect
 	private boolean bordersCard(int row, int column, char cardChar){
 	    //TODO
-		
-		for(int i = -1;i<=1;i++){
-			for(int j = -1; j<=1;j++){
-				if(isValidRow(row+i) && isValidColumn(column+j)){
-					if(cardChar == board[i][j].getCardChar()){
-						return true;
-					}
-				}
+		if(isValidRow(row-1)){
+			if(cardChar == board[row-1][column].getCardChar()){
+				return true;
 			}
 		}
-		
+		if(isValidRow(row+1)){
+			if(cardChar == board[row+1][column].getCardChar()){
+				return true;
+			}
+		}
+		if(isValidColumn(column+1)){
+			if(cardChar == board[row][column-1].getCardChar()){
+				return true;
+			}
+		}
+		if(isValidColumn(column+1)){
+			if(cardChar == board[row][column+1].getCardChar()){
+				return true;
+			}
+		}
 		return false;
     }
 	
