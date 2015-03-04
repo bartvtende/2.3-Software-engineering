@@ -1,10 +1,11 @@
 package ttt;
 
+import java.util.Arrays;
 import java.util.Random;
 
-class TicTacToe {
-	private static final int HUMAN = 0;
-	private static final int COMPUTER = 1;
+public class TicTacToe {
+	public static final int HUMAN = 0;
+	public static final int COMPUTER = 1;
 	public static final int EMPTY = 2;
 
 	public static final int HUMAN_WIN = 0;
@@ -86,8 +87,8 @@ class TicTacToe {
 	}
 
 	// Simple supporting routines
-	private void clearBoard() {
-		// TODO:
+	public void clearBoard() {
+		Arrays.fill(this.board, EMPTY);
 	}
 
 	private boolean boardIsFull() {
@@ -96,7 +97,7 @@ class TicTacToe {
 	}
 
 	// Returns whether 'side' has won in this position
-	private boolean isAWin(int side) {
+	public boolean isAWin(int side) {
 		// TODO:
 		return true;
 	}
@@ -111,7 +112,7 @@ class TicTacToe {
 	}
 
 	// Compute static value of current position (win, draw, etc.)
-	private int positionValue() {
+	public int positionValue() {
 		// TODO:
 		return UNCLEAR;
 	}
