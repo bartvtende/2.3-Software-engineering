@@ -1,6 +1,8 @@
-package huffman;
+package test;
 
 //import huffman.HuffmanTree;
+
+import huffman.HuffmanTree;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
