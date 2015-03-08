@@ -1,6 +1,9 @@
-package huffman;
+package test;
+
+import huffman.Hzip;
 
 import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 /*
