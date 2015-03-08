@@ -169,6 +169,7 @@ public class HuffmanTree
 	              
 	     // TODO = opdracht = DONE maar het werkt niet :S     
 	     while(ar.size()>1){
+	    	 //misschien dat rn == null;
 	    	 HuffNode ln = getLightestNode(ar);
 	    	 HuffNode rn = getLightestNode(ar);
 	    	 
@@ -182,6 +183,11 @@ public class HuffmanTree
 	     root = ar.remove(0);
 	 }
 	 
+	 /**
+	  * removes the HuffNode with the lowest weight from the ArrayList and returns it.
+	  * @param array
+	  * @return
+	  */
 	 private HuffNode getLightestNode(ArrayList<HuffNode> array){
 		 int lightest = 1000000000;//unrealistic high number;
 		 int indexLightest = 0;
