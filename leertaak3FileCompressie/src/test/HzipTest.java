@@ -9,14 +9,13 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import junit.framework.TestCase;
-import junit.*;
 
 public class HzipTest extends TestCase {
 	
-	private final static String FILE = "TestA.dat";
+	//fuck eclipse and files, sorry iedereen met een tere ziel, maar fuck. 
+	private final static String FILE = "C:/Users/Jan-Bert/Documents/GitHub/2.3-software-engineering/leertaak3FileCompressie/src/test/TestA.dat";
 	
-	@Test
-	public void decompressedIsOriginal() throws IOException{
+	public void testDecompressedIsOriginal() throws IOException{
 		String fileText;
 		Scanner str = new Scanner(new File(FILE));
 		fileText = str.nextLine();
@@ -26,10 +25,10 @@ public class HzipTest extends TestCase {
 		Hzip.uncompress(FILE+".huf");
 		
 		String uncompressedFileText;
-		str = new Scanner(new File(FILE+".uc"));
-		uncompressedFileText = str.nextLine();
-		str.close();
+		Scanner str1 = new Scanner(new File(FILE+".uc"));
+		uncompressedFileText = str1.nextLine();
+		str1.close();
 		
-		this.assertEquals(fileText, uncompressedFileText);
+		assertEquals(fileText, uncompressedFileText);
 	}
 }
