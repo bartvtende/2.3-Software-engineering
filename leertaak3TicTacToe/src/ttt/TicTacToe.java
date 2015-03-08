@@ -50,15 +50,26 @@ public class TicTacToe {
 	}
 
 	public int chooseMove() {
-		// Best best=chooseMove(COMPUTER);
-		// return best.row*3+best.column;
-		return 0;
+		Best best = chooseMove(COMPUTER);
+		return best.row * 3 + best.column;
 	}
 
 	// Find optimal move
 	private Best chooseMove(int side) {
 		int opp; // The other side
+
+		if (side == COMPUTER)
+			opp = HUMAN;
+		else
+			opp = COMPUTER;
+
 		Best reply; // Opponent's best reply
+
+		if (side == COMPUTER)
+			reply = new Best(HUMAN_WIN);
+		else
+			reply = new Best(COMPUTER_WIN);
+
 		int simpleEval; // Result of an immediate evaluation
 		int bestRow = 0;
 		int bestColumn = 0;
@@ -67,14 +78,37 @@ public class TicTacToe {
 		if ((simpleEval = positionValue()) != UNCLEAR)
 			return new Best(simpleEval);
 
-		// TODO: implementeren m.b.v. recursie/backtracking
-		return null;
+		for (int i = 0; i < 9; i++) {
+			if (moveOk(i)) {
+				// Place it on the board temporary
+				place(i / 3, i % 3, side);
+				Best turn = chooseMove(opp);
+
+				// Check the side
+				if (side == COMPUTER) {
+					if (reply.val < turn.val) {
+						reply.val = turn.val;
+						reply.row = i / 3;
+						reply.column = i % 3;
+					}
+				} else {
+					if (reply.val > turn.val) {
+						reply.val = turn.val;
+						reply.row = i / 3;
+						reply.column = i % 3;
+					}
+				}
+				// Reset the board
+				place(i / 3, i % 3, EMPTY);
+			}
+		}
+
+		return reply;
 	}
 
 	// check if move ok
 	public boolean moveOk(int move) {
-		// return ( move>=0 && move <=8 && board[move/3 ][ move%3 ] == EMPTY );
-		return true;
+		return (move >= 0 && move <= 8 && board[move / 3][move % 3] == EMPTY);
 	}
 
 	// play move
@@ -88,18 +122,34 @@ public class TicTacToe {
 
 	// Simple supporting routines
 	public void clearBoard() {
-		Arrays.fill(this.board, EMPTY);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				board[i][j] = EMPTY;
+			}
+		}
 	}
 
+	// Check if the board is full
 	private boolean boardIsFull() {
-		// TODO:
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				// Return false if there's an empty spot
+				if (board[i][j] == EMPTY) {
+					return false;
+				}
+			}
+		}
 		return true;
 	}
 
 	// Returns whether 'side' has won in this position
 	public boolean isAWin(int side) {
-		// TODO:
-		return true;
+		int pos = positionValue();
+		if ((pos == COMPUTER_WIN && side == COMPUTER)
+				|| (pos == HUMAN_WIN && side == HUMAN)) {
+			return true;
+		}
+		return false;
 	}
 
 	// Play a move, possibly clearing a square
@@ -113,13 +163,67 @@ public class TicTacToe {
 
 	// Compute static value of current position (win, draw, etc.)
 	public int positionValue() {
-		// TODO:
+		// Initialize arrays for the sums of rows, columns and diagonals
+		String[] columns = new String[3];
+		String[] rows = new String[3];
+		String[] diagonals = new String[2];
+
+		Arrays.fill(columns, "");
+		Arrays.fill(rows, "");
+		Arrays.fill(diagonals, "");
+		
+		// Check column and row wins
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				columns[i] += board[j][i];
+				rows[i] += board[i][j];
+			}
+		    diagonals[0] += board[i][i];
+		    diagonals[1] += board[2-i][2-i];
+		}
+		
+		// Check for column wins
+		for (int i = 0; i < 3; i++) {
+			if (rows[i].equals("111") || columns[i].equals("111")) {
+				return COMPUTER_WIN;
+			} else if (rows[i].equals("000") || columns[i].equals("000")) {
+				return HUMAN_WIN;
+			}
+		}
+		
+		// Check for diagonal wins
+		for (int i = 0; i < 2; i++) {
+			if (diagonals[i].equals("111")) {
+				return COMPUTER_WIN;
+			} else if (diagonals[i].equals("000")) {
+				return HUMAN_WIN;
+			}
+		}
+
+		// Check if board is full (draw)
+		if (boardIsFull()) {
+			return DRAW;
+		}
+
 		return UNCLEAR;
 	}
 
+	// Prints the board in a string
 	public String toString() {
-		// TODO:
-		return "...\n...\n...\n";
+		String str = "";
+
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (board[i][j] == COMPUTER)
+					str += computerChar;
+				else if (board[i][j] == HUMAN)
+					str += humanChar;
+				else
+					str += ".";
+			}
+			str += '\n'; // Start new row
+		}
+		return str;
 	}
 
 	public boolean gameOver() {

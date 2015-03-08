@@ -18,28 +18,28 @@ public class TestTicTacToe extends TestCase {
 	 * @return 
 	 */
 	public void testTicTacToe() {
-		TicTacToe ticTacToe = new TicTacToe();
+		TicTacToe t = new TicTacToe();
 
-		ticTacToe.setComputerPlays();
+		t.setComputerPlays();
 		
-		ticTacToe.playMove(2);
-		ticTacToe.playMove(5);
-		ticTacToe.playMove(0);
-		ticTacToe.playMove(1);
-		ticTacToe.playMove(4);
-		ticTacToe.playMove(6);
-		ticTacToe.playMove(8); // Computer wins
-		ticTacToe.playMove(3);
+		t.playMove(2);
+		t.playMove(5);
+		t.playMove(0);
+		t.playMove(1);
+		t.playMove(4);
+		t.playMove(6);
+		t.playMove(8); // Computer wins
+		t.playMove(3);
 		
 		// Testing positionValue()
-		assertEquals(7, ticTacToe.positionValue());
+		assertEquals(t.COMPUTER_WIN, t.positionValue());
 		
 		// Testing isAWin()
-		assertTrue(ticTacToe.isAWin(ticTacToe.COMPUTER));
-		assertFalse(ticTacToe.isAWin(ticTacToe.HUMAN));
+		assertTrue(t.isAWin(ticTacToe.COMPUTER));
+		assertFalse(t.isAWin(ticTacToe.HUMAN));
 		
 		// Testing chooseMove()
-		ticTacToe.clearBoard(); // Clear board
+		t.clearBoard(); // Clear board
 		
 		/*
 		 * Simulate game:
@@ -48,14 +48,17 @@ public class TestTicTacToe extends TestCase {
 		 * -x-
 		 * --o
 		 */
+
+		t.setHumanPlays();
 		
-		ticTacToe.playMove(4);
-		ticTacToe.playMove(2);
-		ticTacToe.playMove(0);
-		ticTacToe.playMove(6);
+		t.playMove(4);
+		t.playMove(0);
+		t.playMove(8);
+		t.playMove(2);
+		t.playMove(6);
 		
-		// Should equal 5 (best move)
-		assertEquals(5, ticTacToe.chooseMove());
+		// Should equal 1 (best move)
+		assertEquals(1, t.chooseMove());
 	}
 	
 }
