@@ -81,7 +81,20 @@ public class HuffmanTree
 	  */
 	 public int getChar( String code )
 	 {
-	     // TODO = opdracht           
+		 HuffNode node = root; 
+	     for(int i = 0; i<code.length(); i++){
+	    	 String digit = code.substring(i, i);
+	    	 if(digit.equals("0")){
+	    		 node = node.left;
+	    	 }
+	    	 else{
+	    		 node = node.right;
+	    	 }
+	     }
+	     
+	     return node.value;
+	     
+		 // TODO = opdracht DONE           
 	 }
 	 
 	 /**
@@ -154,8 +167,31 @@ public class HuffmanTree
 	             ar.add( newNode );
 	         }
 	              
-	     // TODO = opdracht      
+	     // TODO = opdracht = DONE maar het werkt niet :S     
+	     while(ar.size()>1){
+	    	 HuffNode ln = getLightestNode(ar);
+	    	 HuffNode rn = getLightestNode(ar);
+	    	 
+	    	 HuffNode merge = new HuffNode(0, ln.weight+rn.weight, ln, rn, null);
+	    	 ln.parent = merge;
+	    	 rn.parent = merge;
+	    	 ar.add(merge);
+	     }
+	     
 	     
 	     root = ar.remove(0);
+	 }
+	 
+	 private HuffNode getLightestNode(ArrayList<HuffNode> array){
+		 int lightest = 1000000000;//unrealistic high number;
+		 int indexLightest = 0;
+		 for(int i=0; i<array.size();i++){
+			 if(array.get(i).weight<lightest){
+				 lightest = array.get(i).weight;
+				 indexLightest = i;
+			 }
+		 }
+		 
+		 return array.remove(indexLightest);
 	 }
 }
