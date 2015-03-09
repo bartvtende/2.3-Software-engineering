@@ -44,9 +44,9 @@ public class TestTicTacToe extends TestCase {
 		/*
 		 * Simulate game:
 		 * 
-		 * x-o
+		 * ooo
 		 * -x-
-		 * --o
+		 * x-x
 		 */
 
 		t.setHumanPlays();
