@@ -34,30 +34,42 @@ public class Solution extends Stack<Candidate>
 	 // @return Boolean indicating if cardChar is found.
 	 // can be used in the methods fits and isCorrect
 	private boolean bordersCard(int row, int column, char cardChar){
-	    //TODO
-		if(isValidRow(row-1)){
-			if(cardChar == board[row-1][column].getCardChar()){
-				return true;
+		// TODO
+		if (isValidRow(row - 1)) {
+			if (board[row - 1][column] != null) {
+				//System.out.println(board[row - 1][column].getCardChar());
+				if (cardChar == board[row - 1][column].getCardChar()) {
+					return true;
+				}
 			}
 		}
-		if(isValidRow(row+1)){
-			if(cardChar == board[row+1][column].getCardChar()){
-				return true;
+		if (isValidRow(row + 1)) {
+			if (board[row + 1][column] != null) {
+				//System.out.println(board[row + 1][column].getCardChar());
+				if (cardChar == board[row + 1][column].getCardChar()) {
+					return true;
+				}
 			}
 		}
-		if(isValidColumn(column-1)){
-			if(cardChar == board[row][column-1].getCardChar()){
-				return true;
+		if (isValidColumn(column - 1)) {
+			if (board[row][column - 1] != null) {
+				//System.out.println(board[row][column-1].getCardChar());
+				if (cardChar == board[row][column - 1].getCardChar()) {
+					return true;
+				}
 			}
 		}
-		if(isValidColumn(column+1)){
-			if(cardChar == board[row][column+1].getCardChar()){
-				return true;
+		if (isValidColumn(column + 1)) {
+			if (board[row][column + 1] != null) {
+				//System.out.println(board[row][column+1].getCardChar());
+				if (cardChar == board[row][column + 1].getCardChar()) {
+					return true;
+				}
 			}
+			
 		}
 		return false;
-    }
-	
+	}
 	
 	/**
 	 * Checks whether candidate card of same kind.
@@ -68,7 +80,11 @@ public class Solution extends Stack<Candidate>
 	 */
 	public boolean fits(Candidate candidate){ 
 		//TODO
+		int i = this.size();
 		
+		if(bordersCard(row[i],column[i] , candidate.getCardChar())){
+			return false;
+		}
 	    return true;
     }
 
@@ -127,7 +143,12 @@ public class Solution extends Stack<Candidate>
 	 */
      public String toString(){
 	    //TODO
-	    return "";
+    	 StringBuilder output = new StringBuilder();
+    	 while(!this.empty()){
+    		 output.append(this.pop().getCardChar());
+    	 }
+    	 
+    	 return output.toString();
 	}
      
      //checks if row is on the the board
@@ -152,5 +173,14 @@ public class Solution extends Stack<Candidate>
     		 }
     	 }
     	 return true;
+     }
+     
+     private boolean isValidCell(int row, int column){
+    	 for(int i = 0; i<this.row.length;i++){
+    		 if(this.row[i]==row && this.column[i] == column){
+    			 return true;
+    		 }
+    	 }
+    	 return false;
      }
 }

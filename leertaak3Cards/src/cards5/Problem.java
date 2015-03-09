@@ -1,4 +1,4 @@
-package cards;
+package cards5;
 import java.util.Scanner;
 
 public class Problem
@@ -15,16 +15,20 @@ private Scanner    reader = new Scanner(System.in);
      int index=0;
      while (index<candidates.size())
      {
+    	 System.out.println("fire index" + index);
          if (solution.fits(candidates.get(index)))
          {
+        	 System.out.println("fire fits");
              solution.record(candidates.remove(index)); //move candidate to solution
              if (solution.complete())
              {
-            	 solution.show();
+            	 System.out.println("fire show");
+                 solution.show();
                  System.exit(0);
              }
              else
              {
+            	 System.out.println("fire solve");
                  solve();
              }
              candidates.add(index, solution.eraseRecording()); //move candidate to candidates
