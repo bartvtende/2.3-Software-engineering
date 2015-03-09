@@ -81,6 +81,10 @@ public class HuffmanTree
 	  */
 	 public int getChar( String code )
 	 {
+		 // TODO = opdracht DONE
+		 // als je de string code parse ga je langs alle nodes tot je bij een leaf komt
+		 //de waarde van zo'n leaf geef je terug.
+		 
 		 HuffNode node = root; 
 	     for(int i = 0; i<code.length(); i++){
 	    	 String digit = code.substring(i, i);
@@ -94,7 +98,7 @@ public class HuffmanTree
 	     
 	     return node.value;
 	     
-		 // TODO = opdracht DONE           
+		            
 	 }
 	 
 	 /**
@@ -167,7 +171,11 @@ public class HuffmanTree
 	             ar.add( newNode );
 	         }
 	              
-	     // TODO = opdracht = DONE maar het werkt niet :S     
+	     // TODO = opdracht = DONE maar het werkt niet :S
+	     //pak de lichtste 2 nodes
+	     //voeg ze samen in een nieuwe node
+	     //stop de nieuwe node weer terug in de lijst met beschikbare nodes
+	     //als er nog maar 1 node over is, dan wordt dat de root.
 	     while(ar.size()>1){
 	    	 //misschien dat rn == null;
 	    	 HuffNode ln = getLightestNode(ar);
