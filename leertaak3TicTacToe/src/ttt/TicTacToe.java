@@ -168,6 +168,7 @@ public class TicTacToe {
 		String[] rows = new String[3];
 		String[] diagonals = new String[2];
 
+		// Fill the arrays with an empty string
 		Arrays.fill(columns, "");
 		Arrays.fill(rows, "");
 		Arrays.fill(diagonals, "");
