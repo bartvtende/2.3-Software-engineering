@@ -18,7 +18,7 @@ public class RecursiveSolver implements Solver {
 			return false;
 		}
 
-		// Make new numbers array with one less element		
+		// Make new numbers array with one less element
 		int[] newNumbers = Arrays.copyOf(numbers, n-1);
 
 		// Check if the sum can be with including and excluding the last element
