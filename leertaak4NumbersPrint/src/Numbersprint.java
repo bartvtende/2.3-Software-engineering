@@ -1,42 +1,14 @@
 
 public class Numbersprint {
 
-	Thread a = new Thread(){
-		public void run(){
-			print(1);
-		};
-	};
 	
-	Thread b = new Thread(){
-		public void run(){
-			print(2);
-		};
-	};
-	
-	Thread c = new Thread(){
-		public void run(){
-			print(3);
-		};
-	};
-	
-	Thread d = new Thread(){
-		public void run(){
-			print(4);
-		};
-	};
 	
 	public Numbersprint(){
-		a.start();
-		b.start();
-		c.start();
-		d.start();
+		new Task(1).start();
+		new Task(2).start();
+		new Task(3).start();
+		new Task(4).start();
 	}
 	
-	private void print(int a){
-		synchronized(System.out){
-			System.out.print(a);
-			System.out.print(a);
-			System.out.println();
-		}
-	}
+	
 }
