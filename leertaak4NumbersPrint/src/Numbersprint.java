@@ -3,41 +3,25 @@ public class Numbersprint {
 
 	Thread a = new Thread(){
 		public void run(){
-			synchronized (System.out){
-			System.out.print(1);
-			System.out.print(1);
-			System.out.println();
-			}
+			print(1);
 		};
 	};
 	
 	Thread b = new Thread(){
 		public void run(){
-			synchronized (System.out){
-				System.out.print(2);
-				System.out.print(2);
-				System.out.println();
-				}
+			print(2);
 		};
 	};
 	
 	Thread c = new Thread(){
 		public void run(){
-			synchronized (System.out){
-				System.out.print(3);
-				System.out.print(3);
-				System.out.println();
-				}
+			print(3);
 		};
 	};
 	
 	Thread d = new Thread(){
 		public void run(){
-			synchronized (System.out){
-				System.out.print(4);
-				System.out.print(4);
-				System.out.println();
-				}
+			print(4);
 		};
 	};
 	
@@ -46,5 +30,13 @@ public class Numbersprint {
 		b.start();
 		c.start();
 		d.start();
+	}
+	
+	private void print(int a){
+		synchronized(System.out){
+			System.out.print(a);
+			System.out.print(a);
+			System.out.println();
+		}
 	}
 }
