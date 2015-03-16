@@ -24,6 +24,8 @@ import java.util.StringTokenizer;
 
 public class MobileRobotAI implements Runnable {
 
+	private static final int DISTANCE_FROM_WALL = 10;
+	
 	private final OccupancyMap map;
 	private final MobileRobot robot;
 	
@@ -199,10 +201,13 @@ public class MobileRobotAI implements Runnable {
 	/**
 	 * Returns the amount of steps that the robot can move
 	 * 
+	 * @param forwardSpace the free space in front of th robot. 
 	 * @return
 	 */
-	private int getSteps() {
-		return 0;
+	//TODO
+	private int getSteps(int forwardSpace) {
+		return forwardSpace - DISTANCE_FROM_WALL;
+		
 	}
 	
 	/**
