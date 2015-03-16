@@ -29,8 +29,6 @@ public class MobileRobotAI implements Runnable {
 	private final OccupancyMap map;
 	private final MobileRobot robot;
 	
-	private static final int DISTANCE_FROM_WALL = 10;
-	
 	private PipedInputStream pipeIn;
 	private BufferedReader input;
 	private PrintWriter output;
