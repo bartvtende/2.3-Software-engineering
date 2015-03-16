@@ -27,6 +27,8 @@ public class MobileRobotAI implements Runnable {
 	private final OccupancyMap map;
 	private final MobileRobot robot;
 	
+	private static final int DISTANCE_FROM_WALL = 10;
+	
 	private PipedInputStream pipeIn;
 	private BufferedReader input;
 	private PrintWriter output;
@@ -184,7 +186,17 @@ public class MobileRobotAI implements Runnable {
 	 * @return
 	 */
 	private boolean findMovement() {
-		return false;
+		// Get the robot's current position
+		
+		// Get the robot's current facing direction
+		
+		// Compare the position and direction to the OccupancyMap
+		
+		// Determine whether or not the robot is following the wall
+		boolean foundWall = false;
+		
+		// Return the boolean value
+		return foundWall;
 	}
 	
 	/**
@@ -193,7 +205,17 @@ public class MobileRobotAI implements Runnable {
 	 * @return
 	 */
 	private boolean findMovementToWall() {
-		return false;
+		boolean foundWall = false;
+		// Get the robot's current position
+		
+		// Get the robot's current facing direction
+
+		// Compare the position and direction to the OccupancyMap (REFACTOR WITH findMovement!)
+		
+		// Determine if there's a viable wall in front of the robot
+		
+		// Return the boolean value		
+		return foundWall;
 	}
 	
 	/**
@@ -202,7 +224,15 @@ public class MobileRobotAI implements Runnable {
 	 * @return
 	 */
 	private int getSteps() {
-		return 0;
+		int amountOfSteps;
+		// Scan the surroundings in front of robot
+		
+		// Is there a obstacle? Return the distance of the obstacle - DISTANCE_FROM_WALL		
+		amountOfSteps = 100 - DISTANCE_FROM_WALL;
+				
+		// If there no obstacle? Return the maximum scan range of the laser
+		
+		return amountOfSteps;
 	}
 	
 	/**
