@@ -44,10 +44,7 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	/**
-	 * In this method the gui.controller sends commands to the robot and its devices.
-	 * At the moment all the commands are hardcoded.
-	 * The exercise is to let the gui.controller make intelligent decisions based on
-	 * what has been discovered so far. This information is contained in the OccupancyMap.
+	 * First attempt on AI
 	 */
 	public void run() {
 		this.running = true;
@@ -76,11 +73,10 @@ public class MobileRobotAI implements Runnable {
 					boolean foundNewWall = false;
 					// Try to find a guiding wall
 					while(!foundWall) {
-						moveRight(); // Rotate right (to follow the wall)
-						foundWall = findMovement();
-						if (foundWall) {
+						moveRight(); // Rotate right (to find the wall)
+						foundWall = findMovementToWall();
+						if (foundWall)
 							foundNewWall = true;
-						}
 					}
 					moveForward(getSteps()); // Calculate the amount of steps and go forward
 				}
@@ -140,8 +136,6 @@ public class MobileRobotAI implements Runnable {
 		}
 	}
 	
-	private findPosition
-	
 	private void scanLaser() {
 		try {
 			robot.sendCommand("R1.GETPOS");
@@ -182,6 +176,44 @@ public class MobileRobotAI implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Returns true if the robot is currently following the wall
+	 * 
+	 * @return
+	 */
+	private boolean findMovement() {
+		return false;
+	}
+	
+	/**
+	 * Returns true if steps forward lead to a correct wall
+	 * 
+	 * @return
+	 */
+	private boolean findMovementToWall() {
+		return false;
+	}
+	
+	/**
+	 * Returns the amount of steps that the robot can move
+	 * 
+	 * @return
+	 */
+	private int getSteps() {
+		return 0;
+	}
+	
+	/**
+	 * 
+	 */
+	private void isCompleted() {
+		// Check if the OccupancyMap is fully explored
+		boolean explored;
+		
+		// If yes, set running to false
+		this.running = false;
 	}
 
 }
