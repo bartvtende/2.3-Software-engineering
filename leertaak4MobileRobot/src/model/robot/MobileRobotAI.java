@@ -152,14 +152,6 @@ public class MobileRobotAI implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	private void moveLeft() {
-        robot.sendCommand("P1.ROTATELEFT 90");
-        try {
-			result = input.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	private void moveRight() {
         robot.sendCommand("P1.ROTATERIGHT 90");
