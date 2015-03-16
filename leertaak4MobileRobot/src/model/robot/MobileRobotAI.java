@@ -24,6 +24,8 @@ import java.util.StringTokenizer;
 
 public class MobileRobotAI implements Runnable {
 
+	private static final int DISTANCE_FROM_WALL = 10;
+	
 	private final OccupancyMap map;
 	private final MobileRobot robot;
 	
@@ -221,6 +223,7 @@ public class MobileRobotAI implements Runnable {
 	/**
 	 * Returns the amount of steps that the robot can move
 	 * 
+	 * @param forwardSpace the free space in front of th robot. 
 	 * @return
 	 */
 	private int getSteps() {
@@ -231,7 +234,6 @@ public class MobileRobotAI implements Runnable {
 		amountOfSteps = 100 - DISTANCE_FROM_WALL;
 				
 		// If there no obstacle? Return the maximum scan range of the laser
-		
 		return amountOfSteps;
 	}
 	
