@@ -1,4 +1,4 @@
-package model.robot;
+	package model.robot;
 
 import model.virtualmap.OccupancyMap;
 
@@ -26,13 +26,21 @@ public class MobileRobotAI implements Runnable {
 
 	private final OccupancyMap map;
 	private final MobileRobot robot;
-
+	
+	private PipedInputStream pipeIn;
+	private BufferedReader input;
+	private PrintWriter output;
+	
+	private double position[];
+	private double measures[];
+	
+	private String result = "";
+	
 	private boolean running;
 
 	public MobileRobotAI(MobileRobot robot, OccupancyMap map) {
 		this.map = map;
 		this.robot = robot;
-
 	}
 
 	/**
@@ -42,156 +50,43 @@ public class MobileRobotAI implements Runnable {
 	 * what has been discovered so far. This information is contained in the OccupancyMap.
 	 */
 	public void run() {
-		String result;
 		this.running = true;
-		double position[] = new double[3];
-		double measures[] = new double[360];
+		this.position = new double[3];
+		this.measures = new double[360];
 		while (running) {
 			try {
+				this.result = "";
 
-				PipedInputStream pipeIn = new PipedInputStream();
-				BufferedReader input = new BufferedReader(new InputStreamReader(pipeIn));
-				PrintWriter output = new PrintWriter(new PipedOutputStream(pipeIn), true);
+				this.pipeIn = new PipedInputStream();
+				this.input = new BufferedReader(new InputStreamReader(pipeIn));
+				this.output = new PrintWriter(new PipedOutputStream(pipeIn), true);
 
 				robot.setOutput(output);
-
-//      ases where a variable value is never used after its assignment, i.e.:
-				System.out.println("intelligence running");
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.MOVEBW 60");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.ROTATERIGHT 90");
-				result = input.readLine();
-
-				robot.sendCommand("P1.MOVEFW 100");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.ROTATELEFT 45");
-				result = input.readLine();
-
-				robot.sendCommand("P1.MOVEFW 70");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.MOVEFW 70");
-				result = input.readLine();
-
-				robot.sendCommand("P1.ROTATERIGHT 45");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.MOVEFW 90");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.ROTATERIGHT 45");
-				result = input.readLine();
-
-				robot.sendCommand("P1.MOVEFW 90");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.ROTATERIGHT 45");
-				result = input.readLine();
-
-				robot.sendCommand("P1.MOVEFW 100");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.ROTATERIGHT 90");
-				result = input.readLine();
-
-				robot.sendCommand("P1.MOVEFW 80");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
-
-				robot.sendCommand("P1.MOVEFW 100");
-				result = input.readLine();
-
-				robot.sendCommand("R1.GETPOS");
-				result = input.readLine();
-				parsePosition(result, position);
-
-				robot.sendCommand("L1.SCAN");
-				result = input.readLine();
-				parseMeasures(result, measures);
-				map.drawLaserScan(position, measures);
+				
+				// Step 1: Scan the surroundings with the laser and save the results
+				scanLaser();
+				
+				// Step 2: Check the map and determine if the robot is following the wall or not
+				boolean foundWall = findMovement();
+				
+				// Step 3: Determine the move
+				if (foundWall) {
+					moveForward(getSteps()); // Calculate the amount of steps and go forward
+				} else {
+					boolean foundNewWall = false;
+					// Try to find a guiding wall
+					while(!foundWall) {
+						moveRight(); // Rotate right (to follow the wall)
+						foundWall = findMovement();
+						if (foundWall) {
+							foundNewWall = true;
+						}
+					}
+					moveForward(getSteps()); // Calculate the amount of steps and go forward
+				}
+				
+				// Step 4: Check if the exploration is completed
+				isCompleted();
 				this.running = false;
 			} catch (IOException ioe) {
 				System.err.println("execution stopped");
@@ -244,6 +139,49 @@ public class MobileRobotAI implements Runnable {
 			}
 		}
 	}
+	
+	private findPosition
+	
+	private void scanLaser() {
+		try {
+			robot.sendCommand("R1.GETPOS");
+			this.result = input.readLine();
+			parsePosition(result, position);
+	
+			robot.sendCommand("L1.SCAN");
+				result = input.readLine();
+			parseMeasures(result, measures);
+			map.drawLaserScan(position, measures);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	private void moveLeft() {
+        robot.sendCommand("P1.ROTATELEFT 90");
+        try {
+			result = input.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
+	private void moveRight() {
+        robot.sendCommand("P1.ROTATERIGHT 90");
+        try {
+			result = input.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void moveForward(int steps) {
+		steps *= 10;
+        this.robot.sendCommand("P1.MOVEFW " + steps);
+        try {
+			result = input.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }
