@@ -81,6 +81,7 @@ public class MobileRobotAI implements Runnable {
 						moveRight(); // Rotate right (to find the wall)
 						foundNewWall = findMovement();
 						moveForward(getSteps()); // Calculate the amount of steps and go forward
+						scanLaser();
 					}
 				}
 				
@@ -346,7 +347,10 @@ public class MobileRobotAI implements Runnable {
 				foundWall = true;
 			}
 		}
-		return amountOfSteps / 10;
+		amountOfSteps /= 10;
+		System.out.println(amountOfSteps);
+		
+		return amountOfSteps;
 	}
 	
 	/**
