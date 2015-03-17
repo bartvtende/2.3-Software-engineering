@@ -23,8 +23,7 @@ import java.util.StringTokenizer;
 
 public class MobileRobotAI implements Runnable {
 
-	private static final int DISTANCE_FROM_WALL = 40;
-	private static final int WALL_DISTANCE = 4;
+	private static final int WALL_DISTANCE = 2;
 
 	private static final int LASER_RANGE = 10;
 
@@ -88,7 +87,14 @@ public class MobileRobotAI implements Runnable {
 
 				// Step 3: Determine the move
 				if (foundWall) {
-					moveForward(getSteps());
+					int steps = getSteps();
+					if (steps == 0 && !wallAhead) {
+						moveLeft();
+						scanLaser();
+						moveForward(steps);
+					} else {
+						moveForward(steps);
+					}
 				} else if (!wallAhead) {
 					// Try to find a guiding wall
 					moveRight(); // Rotate right (to find the wall)
@@ -148,19 +154,16 @@ public class MobileRobotAI implements Runnable {
 	 * @return
 	 */
 	private int getSteps() {
-		// Boolean that checks if a wall has been found
-		boolean foundWall = false;
-		
 		int amountOfSteps;
 		int laserRange = 0;
-
+		
 		// Get the robot's current position and direction
 		int[] positionData = getPosition();
 
 		int x = positionData[0];
 		int y = positionData[1];
 		int direction = positionData[2];
-		
+
 		// Get the position to the right
 		int directionToRight = getDirectionToRight();
 
@@ -169,24 +172,77 @@ public class MobileRobotAI implements Runnable {
 
 		int xRight = wallCoordinates[0];
 		int yRight = wallCoordinates[1];
-		
-		System.out.println(xRight);
-		System.out.println(yRight);
 
 		amountOfSteps = LASER_RANGE;
 
 		int[] coordinates = new int[4];
-		
+
 		coordinates[0] = x;
 		coordinates[1] = y;
 		coordinates[2] = xRight;
 		coordinates[3] = yRight;
+		
+		boolean foundWall = false;
 
+		/*
+		while (i < LASER_RANGE && !obstacleIsFound) {
+			char distance = getDistance(coordinates, direction, i);
+			
+			if (distance == map.getObstacle()) {
+				amountOfSteps = i - WALL_DISTANCE;
+				obstacleIsFound = true;
+			}
+		}*/
+		/*
+		while (i < LASER_RANGE && !obstacleIsFound) {
+			char[] distances = new char[2];
+
+			try {
+				distances = getDistances(coordinates, direction, i);
+			} catch (Exception e) {
+				System.out.println("Array out of bounds, but continuing.");
+			}
+			
+			if (distances[1] != map.getObstacle()) {
+				if (foundWall) {
+					if (distances[1] == map.getEmpty()) {
+						amountOfSteps = (i + 1) + WALL_DISTANCE;
+						obstacleIsFound = true;
+					} else if (distances[1] == map.getUnknown()) {
+						amountOfSteps = (i + 1);
+						obstacleIsFound = true;
+					}
+				}
+			} else if (distances[1] == map.getObstacle()) {
+				foundWall = true;
+			}
+			if (distances[0] == map.getObstacle()
+					|| distances[0] == map.getUnknown()) {
+				amountOfSteps = (i + 1) - WALL_DISTANCE;
+				obstacleIsFound = true;
+			}
+			
+			// TODO: delete prints
+			System.out.println("----");
+			System.out.println("position x: " + x + " position y: " + y
+					+ " direction: " + direction);
+			System.out.println("Number: " + i);
+			System.out.println(distances[0]);
+			System.out.println(distances[1]);
+			
+			if (amountOfSteps < 0) {
+				amountOfSteps = 0;
+			}
+			
+			i++;
+		}*/
+
+		
 		// Check the environment in front of the robot
 		for (int i = 1; i <= LASER_RANGE; i++) {
 			int newAmountOfSteps;
-			int[] distances = new int[2];
-			
+			char[] distances = new char[2];
+
 			try {
 				distances = getDistances(coordinates, direction, i);
 			} catch (Exception e) {
@@ -226,8 +282,8 @@ public class MobileRobotAI implements Runnable {
 			}
 			// TODO: delete prints
 			System.out.println("----");
-			System.out.println("position x: " + x + " position y: "
-					+ y + " direction: " + direction);
+			System.out.println("position x: " + x + " position y: " + y
+					+ " direction: " + direction);
 			System.out.println("Number: " + i);
 			System.out.println(distances[0]);
 			System.out.println(distances[1]);
@@ -245,35 +301,6 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	private boolean wallAhead() {
-		// Get the robot's current position
-		/*int xPosition = (int) Math.round(position[0]);
-		int yPosition = (int) Math.round(position[1]);
-
-		// Get the robot's current facing direction
-		int direction = (int) Math.round(position[2]);
-
-		// Check the new position for the right wall
-		int xPositionAhead = xPosition / 10;
-		int yPositionAhead = yPosition / 10;
-
-		switch (direction) {
-		case 90:
-			yPositionAhead += DISTANCE_FROM_WALL / 10;
-			break;
-		case 180:
-			xPositionAhead -= DISTANCE_FROM_WALL / 10;
-			break;
-		case 270:
-			yPositionAhead -= DISTANCE_FROM_WALL / 10;
-			break;
-		case 360:
-			xPositionAhead += DISTANCE_FROM_WALL / 10;
-			break;
-		}
-		9/16
-		System.out.println(xPositionAhead);
-		System.out.println(yPositionAhead);*/
-		
 		// Get the robot's current position and direction
 		int[] positionData = getPosition();
 
@@ -286,15 +313,11 @@ public class MobileRobotAI implements Runnable {
 
 		int xRight = wallCoordinates[0];
 		int yRight = wallCoordinates[1];
-		
+
 		if (map.getGrid()[xRight][yRight] == map.getObstacle()) {
 			return true;
 		}
 		
-		// TODO: refactor
-		if (getSteps() == 0) {
-			return true;
-		}
 		return false;
 	}
 
@@ -377,7 +400,7 @@ public class MobileRobotAI implements Runnable {
 		parseMeasures(result, measures);
 		map.drawLaserScan(position, measures);
 
-		//
+		// Transform 0 into 360
 		if (Math.round(position[2]) == 0) {
 			position[2] = RIGHT;
 		}
@@ -495,8 +518,9 @@ public class MobileRobotAI implements Runnable {
 		return wallCoordinates;
 	}
 
-	private int[] getDistances(int[] coordinates, int direction, int i) throws ArrayIndexOutOfBoundsException {
-		int[] distances = new int[2];
+	private char[] getDistances(int[] coordinates, int direction, int i)
+			throws ArrayIndexOutOfBoundsException {
+		char[] distances = new char[2];
 
 		switch (direction) {
 		case TOP:
@@ -517,6 +541,27 @@ public class MobileRobotAI implements Runnable {
 			break;
 		}
 		return distances;
+	}
+	
+	private char getDistance(int[] coordinates, int direction, int i)
+			throws ArrayIndexOutOfBoundsException {
+		char distance = 0;
+		
+		switch (direction) {
+		case TOP:
+			distance = map.getGrid()[coordinates[0]][coordinates[1] - i];
+			break;
+		case RIGHT:
+			distance = map.getGrid()[coordinates[0] + i][coordinates[1]];
+			break;
+		case BOTTOM:
+			distance = map.getGrid()[coordinates[0]][coordinates[1] + i];
+			break;
+		case LEFT:
+			distance = map.getGrid()[coordinates[0] - i][coordinates[1]];
+			break;
+		}
+		return distance;
 	}
 
 }
