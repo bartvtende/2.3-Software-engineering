@@ -563,5 +563,85 @@ public class MobileRobotAI implements Runnable {
 		}
 		return distance;
 	}
+	
+	//EXPLORED THINGS 
+		//TODO
+		private boolean isExplored(){
+			//Ga over het hele bord als een unknown aan een empty grenst dan return false, aan het einde return true; 
+			for(int i = 0; i<map.getGrid().length;i++){
+				for( int j = 0; j<map.getGrid()[0].length;j++){
+					if(map.getGrid()[i][j] == map.getUnknown()){
+						if(bordersCard(i, j, map.getEmpty())){
+							return false;
+						}
+					}
+				}
+			}
+			return true;
+			
+		}
+		private boolean bordersCard(int row, int column, char cardChar){
+			// TODO
+			if (isValidRow(row - 1)) {
+				if (map.getGrid()[row - 1][column] != 0) {
+					//System.out.println(map.getGrid()[row - 1][column].getCardChar());
+					if (cardChar == map.getGrid()[row - 1][column]) {
+						return true;
+					}
+				}
+			}
+			if (isValidRow(row + 1)) {
+				if (map.getGrid()[row + 1][column] != 0) {
+					//System.out.println(map.getGrid()[row + 1][column].getCardChar());
+					if (cardChar == map.getGrid()[row + 1][column]) {
+						return true;
+					}
+				}
+			}
+			if (isValidColumn(column - 1)) {
+				if (map.getGrid()[row][column - 1] != 0) {
+					//System.out.println(map.getGrid()[row][column-1].getCardChar());
+					if (cardChar == map.getGrid()[row][column - 1]) {
+						return true;
+					}
+				}
+			}
+			if (isValidColumn(column + 1)) {
+				if (map.getGrid()[row][column + 1] != 0) {
+					//System.out.println(map.getGrid()[row][column+1].getCardChar());
+					if (cardChar == map.getGrid()[row][column + 1]) {
+						return true;
+					}
+				}
+				
+			}
+			return false;
+		}
+		
+		//checks if row is on the the board
+	    private boolean isValidRow(int row){
+	   	 if(row<0){
+	   		 return false;
+	   	 }
+	   	 if(row>=map.getGrid().length){
+	   		 return false;
+	   	 }
+	   	 return true;
+	    }
+
+	    //checks if column is on the the board
+	    private boolean isValidColumn(int column){
+	    	
+	    
+	   	 if(column<0){
+	   		 return false;
+	   	 }
+	   	 if(map.getGrid().length>0){
+	   		 if(column>=map.getGrid()[0].length){
+	   			 return false;
+	   		 }
+	   	 }
+	   	 return true;
+	    }
 
 }
