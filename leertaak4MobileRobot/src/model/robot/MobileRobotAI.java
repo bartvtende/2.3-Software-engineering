@@ -52,6 +52,8 @@ public class MobileRobotAI implements Runnable {
 		this.running = true;
 		this.position = new double[3];
 		this.measures = new double[360];
+		
+		System.out.println("Robot is now booting..");
 		while (running) {
 			try {
 				this.result = "";
@@ -91,7 +93,7 @@ public class MobileRobotAI implements Runnable {
 				running = false;
 			}
 		}
-
+		System.out.println("Robot is now shutting down..");
 	}
 
 	private void parsePosition(String value, double position[]) {
@@ -138,6 +140,9 @@ public class MobileRobotAI implements Runnable {
 		}
 	}
 	
+	/**
+	 * Gets the position of the robot and scans the environment.
+	 */
 	private void scanLaser() {
 		try {
 			robot.sendCommand("R1.GETPOS");
@@ -145,7 +150,7 @@ public class MobileRobotAI implements Runnable {
 			parsePosition(result, position);
 	
 			robot.sendCommand("L1.SCAN");
-				result = input.readLine();
+			result = input.readLine();
 			parseMeasures(result, measures);
 			map.drawLaserScan(position, measures);
 		} catch (IOException e) {
@@ -153,6 +158,9 @@ public class MobileRobotAI implements Runnable {
 		}
 	}
 
+	/**
+	 * Rotates the robot 90 degrees to the right
+	 */
 	private void moveRight() {
         robot.sendCommand("P1.ROTATERIGHT 90");
         try {
@@ -162,6 +170,11 @@ public class MobileRobotAI implements Runnable {
 		}
 	}
 
+	/**
+	 * Moves the robot forward for a x amount of steps
+	 * 
+	 * @param steps
+	 */
 	private void moveForward(int steps) {
 		steps *= 10;
         this.robot.sendCommand("P1.MOVEFW " + steps);
@@ -228,13 +241,13 @@ public class MobileRobotAI implements Runnable {
 	}
 	
 	/**
-	 * 
+	 * Checks if all the walls are explored and stop the robot
 	 */
 	private void isCompleted() {
-		// Check if the OccupancyMap is fully explored
+		// Check if all the walls in the OccupancyMap are fully explored
 		boolean explored;
 		
-		// If yes, set running to false
+		// If yes, "Park" the robot and set running to false
 		this.running = false;
 	}
 
