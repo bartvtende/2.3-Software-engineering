@@ -255,11 +255,70 @@ public class MobileRobotAI implements Runnable {
 	 */
 	private int getSteps() {
 		int amountOfSteps;
-		// Scan the surroundings in front of robot		
+		int laserRange = 0;
+
+		// Get the robot's current position
+		int xPosition = (int) Math.round(position[0]);
+		int yPosition = (int) Math.round(position[1]);
 		
-		// Is there a obstacle? Return the distance of the obstacle - DISTANCE_FROM_WALL		
+		// Get the robot's current facing direction
+		int direction = (int) Math.round(position[2]);
+		
+		// Scan the surroundings in front of robot
+		for (Device devices : robot.getSensors()) {
+			if (devices instanceof Laser) {
+				laserRange = ((Laser) devices).getRange();
+			}
+		}
+		
+		amountOfSteps = laserRange;
+		
+		// Check the environment in front of the robot
+		for (int i = 0; i < (laserRange / 10); i++) {
+			int newAmountOfSteps;
+			char nextChar = 0;
+			switch (direction) {
+				case 90:
+					nextChar = map.getGrid()[xPosition][yPosition+i];
+					break;
+				case 180:
+					nextChar = map.getGrid()[xPosition-i][yPosition];
+					break;
+				case 270:
+					nextChar = map.getGrid()[xPosition][yPosition-i];
+					break;
+				case 360:
+					nextChar = map.getGrid()[xPosition+i][yPosition];
+					break;
+			}
+			if (nextChar == map.getObstacle() || nextChar == map.getUnknown()) {
+				newAmountOfSteps = i - (DISTANCE_FROM_WALL / 10);
+				if (amountOfSteps > newAmountOfSteps) {
+					amountOfSteps = newAmountOfSteps;
+				}
+			}
+		}
+
+		// Check the environment right in front of the robot
+		for (int i = 0; i < (laserRange / 10); i++) {
+			switch (direction) {
+				case 90:
+					yPosition += DISTANCE_FROM_WALL;
+					break;
+				case 180:
+					xPosition -= DISTANCE_FROM_WALL;
+					break;
+				case 270:
+					yPosition -= DISTANCE_FROM_WALL;
+					break;
+				case 360:
+					xPosition += DISTANCE_FROM_WALL;
+					break;
+			}
+		}
+		
 		amountOfSteps = 100 - DISTANCE_FROM_WALL;
-				
+		
 		// If there no obstacle? Return the maximum scan range of the laser
 		//minus the DISTANCE_FROM_WALL because we don't want to get it to close 
 		//to a possible wall that is just outside the scanning range.
