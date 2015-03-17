@@ -25,7 +25,7 @@ import java.util.StringTokenizer;
 
 public class MobileRobotAI implements Runnable {
 
-	private static final int DISTANCE_FROM_WALL = 50;
+	private static final int DISTANCE_FROM_WALL = 20;
 	
 	private final OccupancyMap map;
 	private final MobileRobot robot;
@@ -82,7 +82,6 @@ public class MobileRobotAI implements Runnable {
 				
 				// Step 4: Check if the exploration is completed
 				isCompleted();
-				this.running = false;
 			} catch (IOException ioe) {
 				System.err.println("execution stopped");
 				running = false;
@@ -130,7 +129,7 @@ public class MobileRobotAI implements Runnable {
 				}
 				measures[direction] = distance;
 				// Printing out all the degrees and what it encountered.
-				System.out.println("Direction = " + direction + " - Distance = " + distance);
+				//System.out.println("Direction = " + direction + " - Distance = " + distance);
 			}
 		}
 	}
@@ -268,8 +267,7 @@ public class MobileRobotAI implements Runnable {
 		int xPositionRight = xPosition;
 		int yPositionRight = yPosition;
 		
-		switch (direction
-				) {
+		switch (direction) {
 			case 90:
 				xPositionRight -= (DISTANCE_FROM_WALL / 10);
 				break;
@@ -344,7 +342,7 @@ public class MobileRobotAI implements Runnable {
 				foundWall = true;
 			}
 		}
-		return amountOfSteps;
+		return amountOfSteps / 10;
 	}
 	
 	/**
@@ -352,10 +350,12 @@ public class MobileRobotAI implements Runnable {
 	 */
 	private void isCompleted() {
 		// Check if all the walls in the OccupancyMap are fully explored
-		boolean explored;
-		
+		boolean explored = false;
+
 		// If yes, "Park" the robot and set running to false
-		this.running = false;
+		if (explored) {
+			this.running = false;
+		}
 	}
 
 }
