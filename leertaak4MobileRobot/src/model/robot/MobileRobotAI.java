@@ -258,11 +258,34 @@ public class MobileRobotAI implements Runnable {
 		int laserRange = 0;
 
 		// Get the robot's current position
-		int xPosition = (int) Math.round(position[0]);
-		int yPosition = (int) Math.round(position[1]);
+		int xPosition = ((int) Math.round(position[0])) / 10;
+		int yPosition = ((int) Math.round(position[1])) / 10;
 		
 		// Get the robot's current facing direction
 		int direction = (int) Math.round(position[2]);
+		
+		// Check the new position for the right wall
+		int xPositionRight = xPosition;
+		int yPositionRight = yPosition;
+		
+		switch (direction
+				) {
+			case 90:
+				xPositionRight -= (DISTANCE_FROM_WALL / 10);
+				break;
+			case 180:
+				yPositionRight -= (DISTANCE_FROM_WALL / 10);
+				break;
+			case 270:
+				xPositionRight += (DISTANCE_FROM_WALL / 10);
+				break;
+			case 360:
+				yPositionRight += (DISTANCE_FROM_WALL / 10);
+				break;
+		}
+		
+		// Boolean that checks if a wall has been found
+		boolean foundWall = false;
 		
 		// Scan the surroundings in front of robot
 		for (Device devices : robot.getSensors()) {
@@ -276,52 +299,51 @@ public class MobileRobotAI implements Runnable {
 		// Check the environment in front of the robot
 		for (int i = 0; i < (laserRange / 10); i++) {
 			int newAmountOfSteps;
-			char nextChar = 0;
+			char nextCharForward = 0;
+			char nextCharWall = 0;
 			switch (direction) {
 				case 90:
-					nextChar = map.getGrid()[xPosition][yPosition+i];
+					nextCharForward = map.getGrid()[xPosition][yPosition+i];
+					nextCharWall = map.getGrid()[xPositionRight][yPositionRight+i];
 					break;
 				case 180:
-					nextChar = map.getGrid()[xPosition-i][yPosition];
+					nextCharForward = map.getGrid()[xPosition-i][yPosition];
+					nextCharWall = map.getGrid()[xPositionRight-i][yPositionRight];
 					break;
 				case 270:
-					nextChar = map.getGrid()[xPosition][yPosition-i];
+					nextCharForward = map.getGrid()[xPosition][yPosition-i];
+					nextCharWall = map.getGrid()[xPositionRight][yPositionRight-i];
 					break;
 				case 360:
-					nextChar = map.getGrid()[xPosition+i][yPosition];
+					nextCharForward = map.getGrid()[xPosition+i][yPosition];
+					nextCharWall = map.getGrid()[xPositionRight+i][yPositionRight];
 					break;
 			}
-			if (nextChar == map.getObstacle() || nextChar == map.getUnknown()) {
+			if (nextCharForward == map.getObstacle() || nextCharForward == map.getUnknown()) {
 				newAmountOfSteps = i - (DISTANCE_FROM_WALL / 10);
 				if (amountOfSteps > newAmountOfSteps) {
 					amountOfSteps = newAmountOfSteps;
 				}
 			}
-		}
-
-		// Check the environment right in front of the robot
-		for (int i = 0; i < (laserRange / 10); i++) {
-			switch (direction) {
-				case 90:
-					yPosition += DISTANCE_FROM_WALL;
-					break;
-				case 180:
-					xPosition -= DISTANCE_FROM_WALL;
-					break;
-				case 270:
-					yPosition -= DISTANCE_FROM_WALL;
-					break;
-				case 360:
-					xPosition += DISTANCE_FROM_WALL;
-					break;
+			if (nextCharWall != map.getObstacle()) {
+				if (nextCharWall == map.getUnknown()) {
+					newAmountOfSteps = i - (DISTANCE_FROM_WALL / 10);
+					if (amountOfSteps > newAmountOfSteps) {
+						amountOfSteps = newAmountOfSteps;
+					}
+				}
+				if (nextCharWall == map.getEmpty()) {
+					if (foundWall) {
+						newAmountOfSteps = i + (DISTANCE_FROM_WALL / 10);
+						if (amountOfSteps > newAmountOfSteps) {
+							amountOfSteps = newAmountOfSteps;
+						}
+					}
+				}
+			} else {
+				foundWall = true;
 			}
 		}
-		
-		amountOfSteps = 100 - DISTANCE_FROM_WALL;
-		
-		// If there no obstacle? Return the maximum scan range of the laser
-		//minus the DISTANCE_FROM_WALL because we don't want to get it to close 
-		//to a possible wall that is just outside the scanning range.
 		return amountOfSteps;
 	}
 	
