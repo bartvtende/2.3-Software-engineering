@@ -84,22 +84,21 @@ public class MobileRobotAI implements Runnable {
 					System.out.println("Wall ahead");
 					moveLeft();
 				}
-
-				// Step 3: Determine the move
-				if (foundWall) {
-					int steps = getSteps();
-					if (steps == 0 && !wallAhead) {
-						moveLeft();
-						scanLaser();
-						moveForward(steps);
-					} else {
-						moveForward(steps);
+				
+				int steps = getSteps();
+				if (steps == 0) {
+					moveLeft();
+					moveForward(getSteps());
+				} else {
+					// Step 3: Determine the move
+					if (foundWall) {
+						moveForward(getSteps());
+					} else if (!wallAhead) {
+						// Try to find a guiding wall
+						moveRight(); // Rotate right (to find the wall)
+						moveForward(getSteps()); // Calculate the amount of steps
+													// and go forward
 					}
-				} else if (!wallAhead) {
-					// Try to find a guiding wall
-					moveRight(); // Rotate right (to find the wall)
-					moveForward(getSteps()); // Calculate the amount of steps
-												// and go forward
 				}
 
 				// Step 4: Check if the exploration is completed
@@ -256,17 +255,15 @@ public class MobileRobotAI implements Runnable {
 				}
 			}
 			if (distances[1] != map.getObstacle()) {
-				if (distances[1] == map.getUnknown()) {
-					if (foundWall) {
+				if (foundWall) {
+					if (distances[1] == map.getUnknown()) {
 						newAmountOfSteps = i - WALL_DISTANCE;
 						System.out.println(i + " unknown");
 						if (amountOfSteps > newAmountOfSteps) {
 							amountOfSteps = newAmountOfSteps;
 						}
 					}
-				}
-				if (distances[1] == map.getEmpty()) {
-					if (foundWall) {
+					if (distances[1] == map.getEmpty()) {
 						newAmountOfSteps = i + WALL_DISTANCE;
 						System.out.println(i + " empty");
 						if (amountOfSteps > newAmountOfSteps) {
