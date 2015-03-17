@@ -25,7 +25,7 @@ import java.util.StringTokenizer;
 
 public class MobileRobotAI implements Runnable {
 
-	private static final int DISTANCE_FROM_WALL = 20;
+	private static final int DISTANCE_FROM_WALL = 40;
 	
 	private final OccupancyMap map;
 	private final MobileRobot robot;
@@ -64,7 +64,6 @@ public class MobileRobotAI implements Runnable {
 				this.output = new PrintWriter(new PipedOutputStream(pipeIn), true);
 
 				robot.setOutput(output);
-				boolean foundNewWall = false;
 				
 				// Step 1: Scan the surroundings with the laser and save the results
 				scanLaser();
@@ -76,19 +75,20 @@ public class MobileRobotAI implements Runnable {
 				if (foundWall) {
 					moveForward(getSteps()); // Calculate the amount of steps and go forward
 				} else {
-					while (!foundNewWall) {
-						// Try to find a guiding wall
-						moveRight(); // Rotate right (to find the wall)
-						foundNewWall = findMovement();
-						moveForward(getSteps()); // Calculate the amount of steps and go forward
+					// Try to find a guiding wall
+					moveRight(); // Rotate right (to find the wall)
+					moveForward(getSteps()); // Calculate the amount of steps and go forward
+					boolean foundNewWall = findMovement();
+					if (!foundNewWall) {
 						scanLaser();
+						moveLeft();
 					}
 				}
 				
 				// Step 4: Check if the exploration is completed
 				isCompleted();
 			} catch (IOException ioe) {
-				System.err.println("execution stopped");
+				System.err.println("Execution stopped");
 				running = false;
 			}
 		}
@@ -181,12 +181,23 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	/**
+	 * Rotates the robot 90 degrees to the right
+	 */
+	private void moveLeft() {
+        robot.sendCommand("P1.ROTATELEFT 180");
+        try {
+			result = input.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Moves the robot forward for a x amount of steps
 	 * 
 	 * @param steps
 	 */
 	private void moveForward(int steps) {
-		steps *= 10;
         this.robot.sendCommand("P1.MOVEFW " + steps);
         try {
 			result = input.readLine();
@@ -300,7 +311,7 @@ public class MobileRobotAI implements Runnable {
 		amountOfSteps = laserRange;
 		
 		// Check the environment in front of the robot
-		for (int i = 0; i < (laserRange / 10); i++) {
+		for (int i = 1; i <= (laserRange / 10); i++) {
 			int newAmountOfSteps;
 			char nextCharForward = 0;
 			char nextCharWall = 0;
@@ -323,21 +334,21 @@ public class MobileRobotAI implements Runnable {
 					break;
 			}
 			if (nextCharForward == map.getObstacle() || nextCharForward == map.getUnknown()) {
-				newAmountOfSteps = i - (DISTANCE_FROM_WALL / 10);
+				newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
 				if (amountOfSteps > newAmountOfSteps) {
 					amountOfSteps = newAmountOfSteps;
 				}
 			}
 			if (nextCharWall != map.getObstacle()) {
 				if (nextCharWall == map.getUnknown()) {
-					newAmountOfSteps = i - (DISTANCE_FROM_WALL / 10);
+					newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
 					if (amountOfSteps > newAmountOfSteps) {
 						amountOfSteps = newAmountOfSteps;
 					}
 				}
 				if (nextCharWall == map.getEmpty()) {
 					if (foundWall) {
-						newAmountOfSteps = i + (DISTANCE_FROM_WALL / 10);
+						newAmountOfSteps = (i * 10) + DISTANCE_FROM_WALL;
 						if (amountOfSteps > newAmountOfSteps) {
 							amountOfSteps = newAmountOfSteps;
 						}
@@ -346,8 +357,9 @@ public class MobileRobotAI implements Runnable {
 			} else {
 				foundWall = true;
 			}
+			System.out.println(nextCharWall);
+			System.out.println(nextCharForward);
 		}
-		amountOfSteps /= 10;
 		System.out.println(amountOfSteps);
 		
 		return amountOfSteps;

@@ -1,0 +1,26 @@
+<MAP>
+    <OBSTACLE NAME="WandBoven" OPAQUE="false">
+        <POINT X="0" Y="0"/>
+        <POINT X="500" Y="0"/>
+        <POINT X="500" Y="20"/>
+        <POINT X="0" Y="20"/>
+    </OBSTACLE>
+    <OBSTACLE NAME="WandLinks" OPAQUE="false">
+        <POINT X="0" Y="20"/>
+        <POINT X="20" Y="20"/>
+        <POINT X="20" Y="400"/>
+        <POINT X="0" Y="400"/>
+    </OBSTACLE>
+    <OBSTACLE NAME="WandRechts" OPAQUE="false">
+        <POINT X="480" Y="20"/>
+        <POINT X="500" Y="20"/>
+        <POINT X="500" Y="380"/>
+        <POINT X="480" Y="380"/>
+    </OBSTACLE>
+    <OBSTACLE NAME="WandOnder" OPAQUE="false">
+        <POINT X="0" Y="380"/>
+        <POINT X="500" Y="380"/>
+        <POINT X="500" Y="400"/>
+        <POINT X="0" Y="400"/>
+    </OBSTACLE>
+</MAP>
