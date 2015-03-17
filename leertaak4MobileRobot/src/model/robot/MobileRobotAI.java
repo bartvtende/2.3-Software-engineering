@@ -124,7 +124,6 @@ public class MobileRobotAI implements Runnable {
 
 		int x = positionData[0];
 		int y = positionData[1];
-		int direction = positionData[2];
 
 		// Get the position to the right
 		int directionToRight = getDirectionToRight();
@@ -155,7 +154,6 @@ public class MobileRobotAI implements Runnable {
 	 */
 	private int getSteps() {
 		int amountOfSteps;
-		int laserRange = 0;
 		
 		// Get the robot's current position and direction
 		int[] positionData = getPosition();
@@ -222,7 +220,6 @@ public class MobileRobotAI implements Runnable {
 				obstacleIsFound = true;
 			}
 			
-			// TODO: delete prints
 			System.out.println("----");
 			System.out.println("position x: " + x + " position y: " + y
 					+ " direction: " + direction);
@@ -280,10 +277,10 @@ public class MobileRobotAI implements Runnable {
 			} else if (distances[1] == map.getObstacle()) {
 				foundWall = true;
 			}
-			// TODO: delete prints
+			
 			System.out.println("----");
-			System.out.println("position x: " + x + " position y: " + y
-					+ " direction: " + direction);
+			System.out.println("Position x: " + x + ", position y: " + y
+					+ ", direction: " + direction);
 			System.out.println("Number: " + i);
 			System.out.println(distances[0]);
 			System.out.println(distances[1]);
@@ -292,7 +289,6 @@ public class MobileRobotAI implements Runnable {
 		System.out.println("--------------------------------");
 		System.out.println(amountOfSteps);
 
-		// TODO: refactor
 		if (amountOfSteps < 0) {
 			amountOfSteps = 0;
 		}
@@ -325,17 +321,7 @@ public class MobileRobotAI implements Runnable {
 	 * Checks if all the walls are explored and stop the robot
 	 */
 	private void isCompleted() {
-		// Check if all the walls in the OccupancyMap are fully explored
-		/*
-		 * boolean explored = true;
-		 * 
-		 * for (int i = 0 ; i <= map.getMapWidth(); i++) { for (int j = 0; j <=
-		 * map.getMapHeight(); j++) { if (map.getGrid()[i/10][j/10] ==
-		 * map.getUnknown()) { explored = false; } } }
-		 * 
-		 * // If yes, "Park" the robot and set running to false if (explored) {
-		 * this.running = false; }
-		 */
+		// TODO
 	}
 
 	private void parsePosition(String value, double position[]) {
@@ -541,27 +527,6 @@ public class MobileRobotAI implements Runnable {
 			break;
 		}
 		return distances;
-	}
-	
-	private char getDistance(int[] coordinates, int direction, int i)
-			throws ArrayIndexOutOfBoundsException {
-		char distance = 0;
-		
-		switch (direction) {
-		case TOP:
-			distance = map.getGrid()[coordinates[0]][coordinates[1] - i];
-			break;
-		case RIGHT:
-			distance = map.getGrid()[coordinates[0] + i][coordinates[1]];
-			break;
-		case BOTTOM:
-			distance = map.getGrid()[coordinates[0]][coordinates[1] + i];
-			break;
-		case LEFT:
-			distance = map.getGrid()[coordinates[0] - i][coordinates[1]];
-			break;
-		}
-		return distance;
 	}
 
 }
