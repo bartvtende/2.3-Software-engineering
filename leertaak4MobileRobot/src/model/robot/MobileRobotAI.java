@@ -237,6 +237,8 @@ public class MobileRobotAI implements Runnable {
 		amountOfSteps = 100 - DISTANCE_FROM_WALL;
 				
 		// If there no obstacle? Return the maximum scan range of the laser
+		//minus the DISTANCE_FROM_WALL because we don't want to get it to close 
+		//to a possible wall that is just outside the scaning range.
 		return amountOfSteps;
 	}
 	
