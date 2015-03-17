@@ -77,9 +77,10 @@ public class MobileRobotAI implements Runnable {
 				} else {
 					// Try to find a guiding wall
 					moveRight(); // Rotate right (to find the wall)
-					moveForward(getSteps()); // Calculate the amount of steps and go forward
+					int steps = getSteps();
+					moveForward(steps); // Calculate the amount of steps and go forward
 					boolean foundNewWall = findMovement();
-					if (!foundNewWall) {
+					if (foundNewWall && steps == 0) {
 						scanLaser();
 						moveLeft();
 					}
@@ -273,8 +274,8 @@ public class MobileRobotAI implements Runnable {
 		int laserRange = 0;
 
 		// Get the robot's current position
-		int xPosition = ((int) Math.round(position[0])) / 10;
-		int yPosition = ((int) Math.round(position[1])) / 10;
+		int xPosition = (int) Math.round(position[0]);
+		int yPosition = (int) Math.round(position[1]);
 		
 		// Get the robot's current facing direction
 		int direction = (int) Math.round(position[2]);
@@ -285,16 +286,16 @@ public class MobileRobotAI implements Runnable {
 		
 		switch (direction) {
 			case 90:
-				xPositionRight -= (DISTANCE_FROM_WALL / 10);
+				xPositionRight -= DISTANCE_FROM_WALL;
 				break;
 			case 180:
-				yPositionRight -= (DISTANCE_FROM_WALL / 10);
+				yPositionRight -= DISTANCE_FROM_WALL;
 				break;
 			case 270:
-				xPositionRight += (DISTANCE_FROM_WALL / 10);
+				xPositionRight += DISTANCE_FROM_WALL;
 				break;
 			case 360:
-				yPositionRight += (DISTANCE_FROM_WALL / 10);
+				yPositionRight += DISTANCE_FROM_WALL;
 				break;
 		}
 		
@@ -302,13 +303,20 @@ public class MobileRobotAI implements Runnable {
 		boolean foundWall = false;
 		
 		// Scan the surroundings in front of robot
-		for (Device devices : robot.getSensors()) {
+		/*for (Device devices : robot.getSensors()) {
 			if (devices instanceof Laser) {
 				laserRange = ((Laser) devices).getRange();
 			}
-		}
+		}*/
+		
+		laserRange = 100;
 		
 		amountOfSteps = laserRange;
+		
+		xPosition /= 10;
+		yPosition /= 10;
+		xPositionRight /= 10;
+		yPositionRight /= 10;
 		
 		// Check the environment in front of the robot
 		for (int i = 1; i <= (laserRange / 10); i++) {
@@ -341,9 +349,11 @@ public class MobileRobotAI implements Runnable {
 			}
 			if (nextCharWall != map.getObstacle()) {
 				if (nextCharWall == map.getUnknown()) {
-					newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
-					if (amountOfSteps > newAmountOfSteps) {
-						amountOfSteps = newAmountOfSteps;
+					if (foundWall) {
+						newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
+						if (amountOfSteps > newAmountOfSteps) {
+							amountOfSteps = newAmountOfSteps;
+						}
 					}
 				}
 				if (nextCharWall == map.getEmpty()) {
@@ -357,10 +367,18 @@ public class MobileRobotAI implements Runnable {
 			} else {
 				foundWall = true;
 			}
-			System.out.println(nextCharWall);
+			System.out.println("----");
+			System.out.println("position x: " + xPosition + " position y: " + yPosition + " direction: " + direction);
+			System.out.println("Number: " + i);
 			System.out.println(nextCharForward);
+			System.out.println(nextCharWall);
+			System.out.println("----");
 		}
 		System.out.println(amountOfSteps);
+		
+		if (amountOfSteps < 0) {
+			System.out.println("Amount of steps is less than zero, error.");
+		}
 		
 		return amountOfSteps;
 	}
