@@ -73,17 +73,16 @@ public class MobileRobotAI implements Runnable {
 				
 				// Step 3: Determine the move
 				if (foundWall) {
-					moveForward(getSteps()); // Calculate the amount of steps and go forward
+					int steps = getSteps();
+					moveForward(steps); // Calculate the amount of steps and go forward
+					if (steps == 0) {
+						moveLeft();
+						moveForward(getSteps()); // Calculate the amount of steps and go forward
+					}
 				} else {
 					// Try to find a guiding wall
 					moveRight(); // Rotate right (to find the wall)
-					int steps = getSteps();
-					moveForward(steps); // Calculate the amount of steps and go forward
-					boolean foundNewWall = findMovement();
-					if (foundNewWall && steps == 0) {
-						scanLaser();
-						moveLeft();
-					}
+					moveForward(getSteps()); // Calculate the amount of steps and go forward
 				}
 				
 				// Step 4: Check if the exploration is completed
@@ -182,15 +181,26 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	/**
-	 * Rotates the robot 90 degrees to the right
+	 * Rotates the robot 90 degrees to the left
 	 */
 	private void moveLeft() {
-        robot.sendCommand("P1.ROTATELEFT 180");
+        robot.sendCommand("P1.ROTATELEFT 90");
         try {
 			result = input.readLine();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+        // TODO: Refactor with findMovement()
+        
+        // Update the direction after the rotation to the right
+        int newDirection = (int) Math.round(position[2]);
+
+		if (newDirection % 360 == 0) 
+			newDirection -= 360;
+		newDirection += 90;
+        
+        this.position[2] = (double) newDirection;
 	}
 	
 	/**
@@ -323,56 +333,60 @@ public class MobileRobotAI implements Runnable {
 			int newAmountOfSteps;
 			char nextCharForward = 0;
 			char nextCharWall = 0;
-			switch (direction) {
-				case 90:
-					nextCharForward = map.getGrid()[xPosition][yPosition+i];
-					nextCharWall = map.getGrid()[xPositionRight][yPositionRight+i];
-					break;
-				case 180:
-					nextCharForward = map.getGrid()[xPosition-i][yPosition];
-					nextCharWall = map.getGrid()[xPositionRight-i][yPositionRight];
-					break;
-				case 270:
-					nextCharForward = map.getGrid()[xPosition][yPosition-i];
-					nextCharWall = map.getGrid()[xPositionRight][yPositionRight-i];
-					break;
-				case 360:
-					nextCharForward = map.getGrid()[xPosition+i][yPosition];
-					nextCharWall = map.getGrid()[xPositionRight+i][yPositionRight];
-					break;
-			}
-			if (nextCharForward == map.getObstacle() || nextCharForward == map.getUnknown()) {
-				newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
-				if (amountOfSteps > newAmountOfSteps) {
-					amountOfSteps = newAmountOfSteps;
-				}
-			}
-			if (nextCharWall != map.getObstacle()) {
-				if (nextCharWall == map.getUnknown()) {
-					if (foundWall) {
-						newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
-						if (amountOfSteps > newAmountOfSteps) {
-							amountOfSteps = newAmountOfSteps;
-						}
-					}
-				}
-				if (nextCharWall == map.getEmpty()) {
-					if (foundWall) {
-						newAmountOfSteps = (i * 10) + DISTANCE_FROM_WALL;
-						if (amountOfSteps > newAmountOfSteps) {
-							amountOfSteps = newAmountOfSteps;
-						}
-					}
-				}
+			if (xPosition < i) {
+			} else if (yPosition < i) {
 			} else {
-				foundWall = true;
+				switch (direction) {
+					case 90:
+						nextCharForward = map.getGrid()[xPosition][yPosition+i];
+						nextCharWall = map.getGrid()[xPositionRight][yPositionRight+i];
+						break;
+					case 180:
+						nextCharForward = map.getGrid()[xPosition-i][yPosition];
+						nextCharWall = map.getGrid()[xPositionRight-i][yPositionRight];
+						break;
+					case 270:
+						nextCharForward = map.getGrid()[xPosition][yPosition-i];
+						nextCharWall = map.getGrid()[xPositionRight][yPositionRight-i];
+						break;
+					case 360:
+						nextCharForward = map.getGrid()[xPosition+i][yPosition];
+						nextCharWall = map.getGrid()[xPositionRight+i][yPositionRight];
+						break;
+				}
+				if (nextCharForward == map.getObstacle() || nextCharForward == map.getUnknown()) {
+					newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
+					if (amountOfSteps > newAmountOfSteps) {
+						amountOfSteps = newAmountOfSteps;
+					}
+				}
+				if (nextCharWall != map.getObstacle()) {
+					if (nextCharWall == map.getUnknown()) {
+						if (foundWall) {
+							newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
+							if (amountOfSteps > newAmountOfSteps) {
+								amountOfSteps = newAmountOfSteps;
+							}
+						}
+					}
+					if (nextCharWall == map.getEmpty()) {
+						if (foundWall) {
+							newAmountOfSteps = (i * 10) + DISTANCE_FROM_WALL;
+							if (amountOfSteps > newAmountOfSteps) {
+								amountOfSteps = newAmountOfSteps;
+							}
+						}
+					}
+				} else {
+					foundWall = true;
+				}
+				System.out.println("----");
+				System.out.println("position x: " + xPosition + " position y: " + yPosition + " direction: " + direction);
+				System.out.println("Number: " + i);
+				System.out.println(nextCharForward);
+				System.out.println(nextCharWall);
+				System.out.println("----");
 			}
-			System.out.println("----");
-			System.out.println("position x: " + xPosition + " position y: " + yPosition + " direction: " + direction);
-			System.out.println("Number: " + i);
-			System.out.println(nextCharForward);
-			System.out.println(nextCharWall);
-			System.out.println("----");
 		}
 		System.out.println(amountOfSteps);
 		
