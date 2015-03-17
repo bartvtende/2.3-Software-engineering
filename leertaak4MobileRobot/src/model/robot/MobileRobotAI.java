@@ -77,6 +77,7 @@ public class MobileRobotAI implements Runnable {
 					moveForward(steps); // Calculate the amount of steps and go forward
 					if (steps == 0) {
 						moveLeft();
+						scanLaser();
 						moveForward(getSteps()); // Calculate the amount of steps and go forward
 					}
 				} else {
@@ -152,6 +153,11 @@ public class MobileRobotAI implements Runnable {
 			result = input.readLine();
 			parseMeasures(result, measures);
 			map.drawLaserScan(position, measures);
+			
+			if(Math.round(position[2]) == 0) {
+				System.out.println("boe");
+				position[2] = 360;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -190,17 +196,6 @@ public class MobileRobotAI implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-        // TODO: Refactor with findMovement()
-        
-        // Update the direction after the rotation to the right
-        int newDirection = (int) Math.round(position[2]);
-
-		if (newDirection % 360 == 0) 
-			newDirection -= 360;
-		newDirection += 90;
-        
-        this.position[2] = (double) newDirection;
 	}
 	
 	/**
@@ -329,13 +324,11 @@ public class MobileRobotAI implements Runnable {
 		yPositionRight /= 10;
 		
 		// Check the environment in front of the robot
-		for (int i = 1; i <= (laserRange / 10); i++) {
+		for (int i = 0; i < (laserRange / 10); i++) {
 			int newAmountOfSteps;
 			char nextCharForward = 0;
 			char nextCharWall = 0;
-			if (xPosition < i) {
-			} else if (yPosition < i) {
-			} else {
+			try {
 				switch (direction) {
 					case 90:
 						nextCharForward = map.getGrid()[xPosition][yPosition+i];
@@ -354,44 +347,46 @@ public class MobileRobotAI implements Runnable {
 						nextCharWall = map.getGrid()[xPositionRight+i][yPositionRight];
 						break;
 				}
-				if (nextCharForward == map.getObstacle() || nextCharForward == map.getUnknown()) {
-					newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
-					if (amountOfSteps > newAmountOfSteps) {
-						amountOfSteps = newAmountOfSteps;
-					}
-				}
-				if (nextCharWall != map.getObstacle()) {
-					if (nextCharWall == map.getUnknown()) {
-						if (foundWall) {
-							newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
-							if (amountOfSteps > newAmountOfSteps) {
-								amountOfSteps = newAmountOfSteps;
-							}
-						}
-					}
-					if (nextCharWall == map.getEmpty()) {
-						if (foundWall) {
-							newAmountOfSteps = (i * 10) + DISTANCE_FROM_WALL;
-							if (amountOfSteps > newAmountOfSteps) {
-								amountOfSteps = newAmountOfSteps;
-							}
-						}
-					}
-				} else {
-					foundWall = true;
-				}
-				System.out.println("----");
-				System.out.println("position x: " + xPosition + " position y: " + yPosition + " direction: " + direction);
-				System.out.println("Number: " + i);
-				System.out.println(nextCharForward);
-				System.out.println(nextCharWall);
-				System.out.println("----");
+			} catch (Exception e) {
+				System.out.println("Array out of bounds");
 			}
+			if (nextCharForward == map.getObstacle() || nextCharForward == map.getUnknown()) {
+				newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
+				if (amountOfSteps > newAmountOfSteps) {
+					amountOfSteps = newAmountOfSteps;
+				}
+			}
+			if (nextCharWall != map.getObstacle()) {
+				if (nextCharWall == map.getUnknown()) {
+					if (foundWall) {
+						newAmountOfSteps = (i * 10) - DISTANCE_FROM_WALL;
+						if (amountOfSteps > newAmountOfSteps) {
+							amountOfSteps = newAmountOfSteps;
+						}
+					}
+				}
+				if (nextCharWall == map.getEmpty()) {
+					if (foundWall) {
+						newAmountOfSteps = (i * 10) + DISTANCE_FROM_WALL;
+						if (amountOfSteps > newAmountOfSteps) {
+							amountOfSteps = newAmountOfSteps;
+						}
+					}
+				}
+			} else if (nextCharWall == map.getObstacle()){
+				foundWall = true;
+			}
+			System.out.println("----");
+			System.out.println("position x: " + xPosition + " position y: " + yPosition + " direction: " + direction);
+			System.out.println("Number: " + i);
+			System.out.println(nextCharForward);
+			System.out.println(nextCharWall);
+			System.out.println("----");
 		}
 		System.out.println(amountOfSteps);
 		
 		if (amountOfSteps < 0) {
-			System.out.println("Amount of steps is less than zero, error.");
+			amountOfSteps = 0;
 		}
 		
 		return amountOfSteps;
