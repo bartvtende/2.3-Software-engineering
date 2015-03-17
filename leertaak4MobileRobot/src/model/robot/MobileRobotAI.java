@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
 
 public class MobileRobotAI implements Runnable {
 
-	private static final int DISTANCE_FROM_WALL = 10;
+	private static final int DISTANCE_FROM_WALL = 50;
 	
 	private final OccupancyMap map;
 	private final MobileRobot robot;
@@ -135,7 +135,7 @@ public class MobileRobotAI implements Runnable {
 				}
 				measures[direction] = distance;
 				// Printing out all the degrees and what it encountered.
-				System.out.println("direction = " + direction + " distance = " + distance);
+				System.out.println("Direction = " + direction + " - Distance = " + distance);
 			}
 		}
 	}
@@ -191,15 +191,51 @@ public class MobileRobotAI implements Runnable {
 	 * @return
 	 */
 	private boolean findMovement() {
-		// Get the robot's current position
-		
-		// Get the robot's current facing direction
-		
-		// Compare the position and direction to the OccupancyMap
-		
-		// Determine whether or not the robot is following the wall
 		boolean foundWall = false;
 		
+		// TODO: REFACTOR THIS BITCH
+		
+		// Get the robot's current position
+		int xPosition = (int) Math.round(position[0]);
+		int yPosition = (int) Math.round(position[1]);
+		
+		// Get the robot's current facing direction
+		int direction = (int) Math.round(position[2]);
+				
+		// Get the position to the right
+		int directionToRight = direction;
+		if (direction % 360 == 0) 
+			directionToRight -= 360;
+		directionToRight += 90;
+		
+		// Compare the position and direction to the OccupancyMap		
+		int xPositionRight = xPosition;
+		int yPositionRight = yPosition;
+		
+		// Get the possible wall position on the grid
+		switch (directionToRight) {
+			case 90:
+				yPositionRight += DISTANCE_FROM_WALL;
+				break;
+			case 180:
+				xPositionRight -= DISTANCE_FROM_WALL;
+				break;
+			case 270:
+				yPositionRight -= DISTANCE_FROM_WALL;
+				break;
+			case 360:
+				xPositionRight += DISTANCE_FROM_WALL;
+				break;
+		}
+		
+
+		// Determine whether or not the robot is following the wall
+		if (map.getGrid()[xPositionRight / 10][yPositionRight / 10] == map.getObstacle()) {
+			// A wall has been found
+			foundWall = true;
+			System.out.println("Found a wall to follow, yey");
+		}
+			
 		// Return the boolean value
 		return foundWall;
 	}
@@ -211,9 +247,19 @@ public class MobileRobotAI implements Runnable {
 	 */
 	private boolean findMovementToWall() {
 		boolean foundWall = false;
+		
 		// Get the robot's current position
+		int xPosition = (int) Math.round(position[0]);
+		int yPosition = (int) Math.round(position[1]);
 		
 		// Get the robot's current facing direction
+		int direction = (int) Math.round(position[2]);
+		
+		// Get the position to the right
+		int directionToRight = direction;
+		if (direction % 360 == 0) 
+			directionToRight -= 360;
+		directionToRight += 90;
 
 		// Compare the position and direction to the OccupancyMap (REFACTOR WITH findMovement!)
 		
@@ -231,14 +277,14 @@ public class MobileRobotAI implements Runnable {
 	 */
 	private int getSteps() {
 		int amountOfSteps;
-		// Scan the surroundings in front of robot
+		// Scan the surroundings in front of robot		
 		
 		// Is there a obstacle? Return the distance of the obstacle - DISTANCE_FROM_WALL		
 		amountOfSteps = 100 - DISTANCE_FROM_WALL;
 				
 		// If there no obstacle? Return the maximum scan range of the laser
 		//minus the DISTANCE_FROM_WALL because we don't want to get it to close 
-		//to a possible wall that is just outside the scaning range.
+		//to a possible wall that is just outside the scanning range.
 		return amountOfSteps;
 	}
 	

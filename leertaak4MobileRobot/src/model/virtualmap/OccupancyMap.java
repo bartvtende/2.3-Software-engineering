@@ -45,8 +45,6 @@ public class OccupancyMap {
 		}
 
 		this.actionListenerList = new ArrayList<ActionListener>();
-
-
 	}
 
 	public void drawLaserScan(double position[], double measures[]) {

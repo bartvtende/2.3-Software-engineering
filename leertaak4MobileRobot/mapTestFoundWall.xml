@@ -1,0 +1,8 @@
+<MAP>
+    <OBSTACLE NAME="W1" OPAQUE="false">
+        <POINT X="140" Y="0"/>
+        <POINT X="140" Y="500"/>
+        <POINT X="150" Y="500"/>
+        <POINT X="150" Y="0"/>
+    </OBSTACLE>
+</MAP>
