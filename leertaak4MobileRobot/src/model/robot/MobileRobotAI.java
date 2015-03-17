@@ -64,6 +64,7 @@ public class MobileRobotAI implements Runnable {
 				this.output = new PrintWriter(new PipedOutputStream(pipeIn), true);
 
 				robot.setOutput(output);
+				boolean foundNewWall = false;
 				
 				// Step 1: Scan the surroundings with the laser and save the results
 				scanLaser();
@@ -75,9 +76,12 @@ public class MobileRobotAI implements Runnable {
 				if (foundWall) {
 					moveForward(getSteps()); // Calculate the amount of steps and go forward
 				} else {
-					// Try to find a guiding wall
-					moveRight(); // Rotate right (to find the wall)
-					moveForward(getSteps()); // Calculate the amount of steps and go forward
+					while (!foundNewWall) {
+						// Try to find a guiding wall
+						moveRight(); // Rotate right (to find the wall)
+						foundNewWall = findMovement();
+						moveForward(getSteps()); // Calculate the amount of steps and go forward
+					}
 				}
 				
 				// Step 4: Check if the exploration is completed
