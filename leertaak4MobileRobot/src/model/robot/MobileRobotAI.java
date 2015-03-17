@@ -1,5 +1,7 @@
 	package model.robot;
 
+import model.device.Device;
+import model.device.Laser;
 import model.virtualmap.OccupancyMap;
 
 import java.io.PipedInputStream;
@@ -8,7 +10,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.PipedOutputStream;
 import java.io.IOException;
-
 import java.util.StringTokenizer;
 
 /**
@@ -74,14 +75,8 @@ public class MobileRobotAI implements Runnable {
 				if (foundWall) {
 					moveForward(getSteps()); // Calculate the amount of steps and go forward
 				} else {
-					boolean foundNewWall = false;
 					// Try to find a guiding wall
-					while(!foundWall) {
-						moveRight(); // Rotate right (to find the wall)
-						foundWall = findMovementToWall();
-						if (foundWall)
-							foundNewWall = true;
-					}
+					moveRight(); // Rotate right (to find the wall)
 					moveForward(getSteps()); // Calculate the amount of steps and go forward
 				}
 				
@@ -168,6 +163,17 @@ public class MobileRobotAI implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+       
+        // TODO: Refactor with findMovement()
+        
+        // Update the direction after the rotation to the right
+        int newDirection = (int) Math.round(position[2]);
+
+		if (newDirection % 360 == 0) 
+			newDirection -= 360;
+		newDirection += 90;
+        
+        this.position[2] = (double) newDirection;
 	}
 
 	/**
@@ -240,34 +246,6 @@ public class MobileRobotAI implements Runnable {
 		return foundWall;
 	}
 	
-	/**
-	 * Returns true if steps forward lead to a correct wall
-	 * 
-	 * @return
-	 */
-	private boolean findMovementToWall() {
-		boolean foundWall = false;
-		
-		// Get the robot's current position
-		int xPosition = (int) Math.round(position[0]);
-		int yPosition = (int) Math.round(position[1]);
-		
-		// Get the robot's current facing direction
-		int direction = (int) Math.round(position[2]);
-		
-		// Get the position to the right
-		int directionToRight = direction;
-		if (direction % 360 == 0) 
-			directionToRight -= 360;
-		directionToRight += 90;
-
-		// Compare the position and direction to the OccupancyMap (REFACTOR WITH findMovement!)
-		
-		// Determine if there's a viable wall in front of the robot
-		
-		// Return the boolean value		
-		return foundWall;
-	}
 	
 	/**
 	 * Returns the amount of steps that the robot can move

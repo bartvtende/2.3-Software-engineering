@@ -245,4 +245,8 @@ public class Laser extends Device {
 			}
 		}
 	}
+	
+	public int getRange() {
+		return this.range;
+	}
 }
