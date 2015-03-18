@@ -456,31 +456,6 @@ public class MobileRobotAI implements Runnable {
 		return wallCoordinates;
 	}
 
-	private char[] getDistances(int[] coordinates, int direction, int i)
-			throws ArrayIndexOutOfBoundsException {
-		char[] distances = new char[2];
-
-		switch (direction) {
-		case TOP:
-			distances[0] = map.getGrid()[coordinates[0]][coordinates[1] - i];
-			distances[1] = map.getGrid()[coordinates[2]][coordinates[3] - i];
-			break;
-		case RIGHT:
-			distances[0] = map.getGrid()[coordinates[0] + i][coordinates[1]];
-			distances[1] = map.getGrid()[coordinates[2] + i][coordinates[3]];
-			break;
-		case BOTTOM:
-			distances[0] = map.getGrid()[coordinates[0]][coordinates[1] + i];
-			distances[1] = map.getGrid()[coordinates[2]][coordinates[3] + i];
-			break;
-		case LEFT:
-			distances[0] = map.getGrid()[coordinates[0] - i][coordinates[1]];
-			distances[1] = map.getGrid()[coordinates[2] - i][coordinates[3]];
-			break;
-		}
-		return distances;
-	}
-	
 	private char getDistanceForward(int x, int y, int direction, int i) {
 		char distance = 0;
 		char[][] mapCopy = map.getGrid();
