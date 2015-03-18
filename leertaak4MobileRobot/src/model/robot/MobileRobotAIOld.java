@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
  * @version 2.0
  */
 
-public class MobileRobotAI implements Runnable {
+public class MobileRobotAIOld implements Runnable {
 
 	private static final int WALL_DISTANCE = 2;
 
@@ -31,10 +31,6 @@ public class MobileRobotAI implements Runnable {
 	private static final int RIGHT = 360;
 	private static final int BOTTOM = 90;
 	private static final int LEFT = 180;
-
-	private static final String ROTATE_LEFT = "P1.ROTATELEFT 90";
-	private static final String ROTATE_RIGHT = "P1.ROTATERIGHT 90";
-	private static final String ROTATE_AXIS = "P1.ROTATELEFT 180";
 
 	private final OccupancyMap map;
 	private final MobileRobot robot;
@@ -50,7 +46,7 @@ public class MobileRobotAI implements Runnable {
 
 	private boolean running;
 
-	public MobileRobotAI(MobileRobot robot, OccupancyMap map) {
+	public MobileRobotAIOld(MobileRobot robot, OccupancyMap map) {
 		this.map = map;
 		this.robot = robot;
 	}
@@ -81,17 +77,28 @@ public class MobileRobotAI implements Runnable {
 
 				// Step 2: Check the map and determine if the robot is following
 				// the wall or not
-				boolean wallRight = findMovement();
+				boolean foundWall = findMovement();
 				boolean wallAhead = wallAhead();
 
 				if (wallAhead) {
-					rotate(ROTATE_LEFT);
-					moveForward(getSteps());
-				} else if (wallRight) {
+					System.out.println("Wall ahead");
+					moveLeft();
+				}
+				
+				int steps = getSteps();
+				if (steps == 0) {
+					moveLeft();
 					moveForward(getSteps());
 				} else {
-					rotate(ROTATE_RIGHT);
-					moveForward(getSteps());
+					// Step 3: Determine the move
+					if (foundWall) {
+						moveForward(getSteps());
+					} else if (!wallAhead) {
+						// Try to find a guiding wall
+						moveRight(); // Rotate right (to find the wall)
+						moveForward(getSteps()); // Calculate the amount of steps
+													// and go forward
+					}
 				}
 
 				// Step 4: Check if the exploration is completed
@@ -146,7 +153,7 @@ public class MobileRobotAI implements Runnable {
 	 */
 	private int getSteps() {
 		int amountOfSteps;
-
+		
 		// Get the robot's current position and direction
 		int[] positionData = getPosition();
 
@@ -171,10 +178,20 @@ public class MobileRobotAI implements Runnable {
 		coordinates[1] = y;
 		coordinates[2] = xRight;
 		coordinates[3] = yRight;
-
+		
 		boolean foundWall = false;
+
 		/*
-		while (i <= LASER_RANGE && !obstacleIsFound) {
+		while (i < LASER_RANGE && !obstacleIsFound) {
+			char distance = getDistance(coordinates, direction, i);
+			
+			if (distance == map.getObstacle()) {
+				amountOfSteps = i - WALL_DISTANCE;
+				obstacleIsFound = true;
+			}
+		}*/
+		/*
+		while (i < LASER_RANGE && !obstacleIsFound) {
 			char[] distances = new char[2];
 
 			try {
@@ -182,7 +199,7 @@ public class MobileRobotAI implements Runnable {
 			} catch (Exception e) {
 				System.out.println("Array out of bounds, but continuing.");
 			}
-
+			
 			if (distances[1] != map.getObstacle()) {
 				if (foundWall) {
 					if (distances[1] == map.getEmpty()) {
@@ -201,20 +218,22 @@ public class MobileRobotAI implements Runnable {
 				amountOfSteps = (i + 1) - WALL_DISTANCE;
 				obstacleIsFound = true;
 			}
-
+			
 			System.out.println("----");
 			System.out.println("position x: " + x + " position y: " + y
 					+ " direction: " + direction);
 			System.out.println("Number: " + i);
 			System.out.println(distances[0]);
 			System.out.println(distances[1]);
-
+			
 			if (amountOfSteps < 0) {
 				amountOfSteps = 0;
 			}
-
+			
 			i++;
 		}*/
+
+		
 		// Check the environment in front of the robot
 		for (int i = 1; i <= LASER_RANGE; i++) {
 			int newAmountOfSteps;
@@ -255,7 +274,7 @@ public class MobileRobotAI implements Runnable {
 			} else if (distances[1] == map.getObstacle()) {
 				foundWall = true;
 			}
-
+			
 			System.out.println("----");
 			System.out.println("Position x: " + x + ", position y: " + y
 					+ ", direction: " + direction);
@@ -291,7 +310,7 @@ public class MobileRobotAI implements Runnable {
 		if (map.getGrid()[xRight][yRight] == map.getObstacle()) {
 			return true;
 		}
-
+		
 		return false;
 	}
 
@@ -371,12 +390,24 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	/**
-	 * Rotates the robot x degrees to the xx
+	 * Rotates the robot 90 degrees to the right
 	 * 
 	 * @throws IOException
 	 */
-	private void rotate(String command) throws IOException {
-		robot.sendCommand(command);
+	private void moveRight() throws IOException {
+		robot.sendCommand("P1.ROTATERIGHT 90");
+		result = input.readLine();
+
+		rescanPosition();
+	}
+
+	/**
+	 * Rotates the robot 90 degrees to the left
+	 * 
+	 * @throws IOException
+	 */
+	private void moveLeft() throws IOException {
+		robot.sendCommand("P1.ROTATELEFT 90");
 		result = input.readLine();
 	}
 
@@ -494,88 +525,85 @@ public class MobileRobotAI implements Runnable {
 		}
 		return distances;
 	}
-
-	// EXPLORED THINGS
-	// TODO
-	private boolean isExplored() {
-		// Ga over het hele bord als een unknown aan een empty grenst dan return
-		// false, aan het einde return true;
-		for (int i = 0; i < map.getGrid().length; i++) {
-			for (int j = 0; j < map.getGrid()[0].length; j++) {
-				if (map.getGrid()[i][j] == map.getUnknown()) {
-					if (bordersCard(i, j, map.getEmpty())) {
-						return false;
+	
+	//EXPLORED THINGS 
+		//TODO
+		private boolean isExplored(){
+			//Ga over het hele bord als een unknown aan een empty grenst dan return false, aan het einde return true; 
+			for(int i = 0; i<map.getGrid().length;i++){
+				for( int j = 0; j<map.getGrid()[0].length;j++){
+					if(map.getGrid()[i][j] == map.getUnknown()){
+						if(bordersCard(i, j, map.getEmpty())){
+							return false;
+						}
 					}
 				}
 			}
+			return true;
+			
 		}
-		return true;
-
-	}
-
-	private boolean bordersCard(int row, int column, char cardChar) {
-		// TODO
-		if (isValidRow(row - 1)) {
-			if (map.getGrid()[row - 1][column] != 0) {
-				// System.out.println(map.getGrid()[row -
-				// 1][column].getCardChar());
-				if (cardChar == map.getGrid()[row - 1][column]) {
-					return true;
+		private boolean bordersCard(int row, int column, char cardChar){
+			// TODO
+			if (isValidRow(row - 1)) {
+				if (map.getGrid()[row - 1][column] != 0) {
+					//System.out.println(map.getGrid()[row - 1][column].getCardChar());
+					if (cardChar == map.getGrid()[row - 1][column]) {
+						return true;
+					}
 				}
 			}
-		}
-		if (isValidRow(row + 1)) {
-			if (map.getGrid()[row + 1][column] != 0) {
-				// System.out.println(map.getGrid()[row +
-				// 1][column].getCardChar());
-				if (cardChar == map.getGrid()[row + 1][column]) {
-					return true;
+			if (isValidRow(row + 1)) {
+				if (map.getGrid()[row + 1][column] != 0) {
+					//System.out.println(map.getGrid()[row + 1][column].getCardChar());
+					if (cardChar == map.getGrid()[row + 1][column]) {
+						return true;
+					}
 				}
 			}
-		}
-		if (isValidColumn(column - 1)) {
-			if (map.getGrid()[row][column - 1] != 0) {
-				// System.out.println(map.getGrid()[row][column-1].getCardChar());
-				if (cardChar == map.getGrid()[row][column - 1]) {
-					return true;
+			if (isValidColumn(column - 1)) {
+				if (map.getGrid()[row][column - 1] != 0) {
+					//System.out.println(map.getGrid()[row][column-1].getCardChar());
+					if (cardChar == map.getGrid()[row][column - 1]) {
+						return true;
+					}
 				}
 			}
-		}
-		if (isValidColumn(column + 1)) {
-			if (map.getGrid()[row][column + 1] != 0) {
-				// System.out.println(map.getGrid()[row][column+1].getCardChar());
-				if (cardChar == map.getGrid()[row][column + 1]) {
-					return true;
+			if (isValidColumn(column + 1)) {
+				if (map.getGrid()[row][column + 1] != 0) {
+					//System.out.println(map.getGrid()[row][column+1].getCardChar());
+					if (cardChar == map.getGrid()[row][column + 1]) {
+						return true;
+					}
 				}
+				
 			}
-
-		}
-		return false;
-	}
-
-	// checks if row is on the the board
-	private boolean isValidRow(int row) {
-		if (row < 0) {
 			return false;
 		}
-		if (row >= map.getGrid().length) {
-			return false;
-		}
-		return true;
-	}
+		
+		//checks if row is on the the board
+	    private boolean isValidRow(int row){
+	   	 if(row<0){
+	   		 return false;
+	   	 }
+	   	 if(row>=map.getGrid().length){
+	   		 return false;
+	   	 }
+	   	 return true;
+	    }
 
-	// checks if column is on the the board
-	private boolean isValidColumn(int column) {
-
-		if (column < 0) {
-			return false;
-		}
-		if (map.getGrid().length > 0) {
-			if (column >= map.getGrid()[0].length) {
-				return false;
-			}
-		}
-		return true;
-	}
+	    //checks if column is on the the board
+	    private boolean isValidColumn(int column){
+	    	
+	    
+	   	 if(column<0){
+	   		 return false;
+	   	 }
+	   	 if(map.getGrid().length>0){
+	   		 if(column>=map.getGrid()[0].length){
+	   			 return false;
+	   		 }
+	   	 }
+	   	 return true;
+	    }
 
 }
