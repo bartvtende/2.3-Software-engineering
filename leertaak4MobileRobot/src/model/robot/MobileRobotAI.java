@@ -192,7 +192,7 @@ public class MobileRobotAI implements Runnable {
 		while (i <= LASER_RANGE && !stopForward) {
 			char blockForward = getDistanceForward(x, y, direction, i);
 			
-			System.out.println("Forward scan - Supposed char:" + blockForward);
+			System.out.println("Forward scan - Supposed char: " + blockForward);
 			
 			// Block is either an obstacle or unknown
 			if (blockForward == map.getObstacle() || blockForward == map.getUnknown()) {
@@ -216,7 +216,7 @@ public class MobileRobotAI implements Runnable {
 		while (i <= LASER_RANGE && !stopRight) {
 			char blockRight = getDistanceRight(x, y, direction, i);
 
-			System.out.println("Right scan - Supposed char:" + blockRight);
+			System.out.println("Right scan - Supposed char: " + blockRight);
 			
 			if (blockRight != map.getObstacle()) {
 				if (blockRight == map.getEmpty() && foundWall) {
