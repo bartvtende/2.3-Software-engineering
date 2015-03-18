@@ -106,10 +106,10 @@ public class MobileRobotAI implements Runnable {
 					}
 				}
 				
-				System.out.println(getPosition()[2]);
-				
 				// Step 4: Check if the exploration is completed
-				isExplored();
+				if (isExplored()) {
+					running = false;
+				}
 			} catch (IOException ioe) {
 				System.err.println("Execution stopped");
 				running = false;
