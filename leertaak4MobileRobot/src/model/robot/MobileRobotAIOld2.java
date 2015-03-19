@@ -18,10 +18,10 @@ import java.util.StringTokenizer;
  * @author Bart van 't Ende (2015)
  * @author Jan-Bert van Slochteren (2015)
  * @author Davide Brugali (2002)
- * @version 1.3
+ * @version 2.0
  */
 
-public class MobileRobotAI implements Runnable {
+public class MobileRobotAIOld2 implements Runnable {
 
 	private static final int WALL_DISTANCE = 2;
 
@@ -34,9 +34,6 @@ public class MobileRobotAI implements Runnable {
 
 	private static final String ROTATE_LEFT = "P1.ROTATELEFT 90";
 	private static final String ROTATE_RIGHT = "P1.ROTATERIGHT 90";
-
-	private static final int BEGIN = 1;
-	private static final int WALL = 2;
 
 	private final OccupancyMap map;
 	private final MobileRobot robot;
@@ -52,21 +49,20 @@ public class MobileRobotAI implements Runnable {
 
 	private boolean running;
 
-	public MobileRobotAI(MobileRobot robot, OccupancyMap map) {
+	public MobileRobotAIOld2(MobileRobot robot, OccupancyMap map) {
 		this.map = map;
 		this.robot = robot;
 	}
 
 	/**
-	 * AI implementation for the robot
+	 * First attempt on AI
 	 */
 	public void run() {
 		this.running = true;
 		this.position = new double[3];
 		this.measures = new double[360];
-
-		boolean begin = true;
-		boolean turnAroundWall = false;
+		
+		boolean rightCount = false;
 
 		System.out.println("Robot is now booting..");
 		while (running) {
@@ -84,65 +80,33 @@ public class MobileRobotAI implements Runnable {
 				// results
 				scanLaser();
 
-				// Step 2: Check if the exploration is just beginning
-				while (begin) {
-					if (!scanWallForward()) {
-						System.out.println("Beginning state");
-						// Go forward until we scan a wall forward
-						moveForward(getSteps(BEGIN));
-						scanLaser();
-					} else {
-						System.out.println("Ending begin state - turn left");
-						// Turn left
-						rotate(ROTATE_LEFT);
-						begin = false;
-					}
-				}
+				// Step 2: Check the map and determine if the robot is following
+				// the wall or not
+				boolean wallRight = findWallRight();
+				boolean wallAhead = findWallAhead();
 
-				// Step 3: Check if the robot follows the right wall and there's
-				// a wall in front
-				if (scanWallForward() && scanWallRight()) {
-					System.out
-							.println("Found a wall forward and right = turn left");
-					// Go left
+				if (wallAhead && wallRight) {
+					System.out.println("Robot - Turning left");
 					rotate(ROTATE_LEFT);
-				} else if (turnAroundWall) {
-					// Step 4: Check turnAroundWall, true means that the robot
-					// needs to maneuver around the wall
-					System.out
-							.println("Found an ending wall, manouvering around it");
-					// Go forward, right and forward
-					turnAroundWall();
-					turnAroundWall = false;
-				} else if (scanWallRight() && !turnAroundWall) {
-					// Step 5: Check if the robot is following the wall
-					int stepsForward = getSteps(WALL);
-					if (stepsForward == 0) {
-						// Wall is ending, so set boolean turnAroundWall to true
-						// to trigger the wall maneuver
-						System.out
-								.println("Found no wall to the right, commanding to move around it");
-						turnAroundWall = true;
-					} else {
-						// Go forward, wall is not ending
-						System.out
-								.println("Found a wall right, moving forward");
-						moveForward(stepsForward);
-					}
+					moveForward(getSteps());
+				} else if (wallRight) {
+					System.out.println("Robot - Going forward");
+					moveForward(getSteps());
 				} else {
-					System.out
-							.println("Something went wrong, oops. Couldn't find a direciton");
-					System.out.println("Printing position - x: " + position[1]
-							+ ", y: " + position[1] + ", dir: " + position[2]);
-					System.out.println("Printing scanWallForward: "
-							+ scanWallForward() + ", scanWallRight: "
-							+ scanWallRight() + ", turnAroundWall: "
-							+ turnAroundWall);
-					// Start over (begin to true), fail safe
-					begin = true;
+					if (rightCount) {
+						rotate(ROTATE_LEFT);
+						System.out.println("Robot - Turning left instead of right");
+						moveForward(getSteps());
+						rightCount = false;
+					} else {
+						rotate(ROTATE_RIGHT);
+						System.out.println("Robot - Turning right");
+						moveForward(getSteps());
+						rightCount = true;
+					}
 				}
-
-				// Step 6: Check if the exploration is completed and stop it
+				
+				// Step 4: Check if the exploration is completed
 				if (isExplored()) {
 					running = false;
 				}
@@ -159,7 +123,7 @@ public class MobileRobotAI implements Runnable {
 	 * 
 	 * @return
 	 */
-	private boolean scanWallRight() {
+	private boolean findWallRight() {
 		boolean foundWall = false;
 
 		int[] positionData = getPosition();
@@ -188,11 +152,13 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	/**
-	 * Returns a boolean true if there's a wall in front of the robot
+	 * Returns the amount of steps that the robot can move
 	 * 
+	 * @param forwardSpace
+	 *            the free space in front of th robot.
 	 * @return
 	 */
-	private boolean scanWallForward() {
+	private int getSteps() { 
 		// Get the robot's current position and direction
 		int[] positionData = getPosition();
 
@@ -200,6 +166,93 @@ public class MobileRobotAI implements Runnable {
 		int y = positionData[1];
 		int direction = positionData[2];
 
+		// Get the position to the right
+		int directionToRight = getDirectionToRight();
+
+		// Get the coordinates of the supposed wall
+		int[] wallCoordinates = getWallCoordinates(x, y, directionToRight);
+		int[] coordinates = new int[4];
+
+		int xRight = wallCoordinates[0];
+		int yRight = wallCoordinates[1];
+
+		coordinates[0] = x;
+		coordinates[1] = y;
+		coordinates[2] = xRight;
+		coordinates[3] = yRight;
+
+		boolean foundWall = false;
+		boolean stopForward = false;
+		boolean stopRight = false;
+		
+		int maxDistance = 0;
+		int i = 1;
+		
+		// Check the maximum forward distance
+		while (i <= LASER_RANGE && !stopForward) {
+			char blockForward = getDistanceForward(x, y, direction, i);
+			
+			System.out.println("Forward scan - Supposed char: " + blockForward);
+			
+			// Block is either an obstacle or unknown
+			if (blockForward == map.getObstacle() || blockForward == map.getUnknown()) {
+				i--;
+				System.out.println("Forward scan - Found wall/unknown: " + i);
+				maxDistance = i - WALL_DISTANCE;
+				System.out.println("Forward scan - Max distance: " + maxDistance);			
+				stopForward = true;
+			}
+			
+			// Reached the end of the loop
+			if (i == LASER_RANGE && maxDistance == 0) {
+				maxDistance = i - WALL_DISTANCE;
+				stopForward = true;
+			}
+			i++;
+		}
+		
+		i = 1;
+		
+		while (i <= LASER_RANGE && !stopRight) {
+			char blockRight = getDistanceRight(x, y, direction, i);
+
+			System.out.println("Right scan - Supposed char: " + blockRight);
+			
+			if (blockRight != map.getObstacle()) {
+				if (blockRight == map.getEmpty() && foundWall) {
+					int rightDistance = 0;
+					rightDistance = i + WALL_DISTANCE;
+					if (maxDistance > rightDistance) {
+						maxDistance = rightDistance;
+					}
+					stopRight = true;
+					System.out.println("Right scan - Max distance: " + maxDistance);
+				}
+			} else if (blockRight == map.getObstacle()) {
+				foundWall = true;
+			}
+			
+			// Reached the end of the loop
+			if (i == LASER_RANGE && maxDistance == 0) {
+				stopRight = true;
+			}
+			i++;
+		}
+
+		System.out.println("--------------------------------");
+		System.out.println(maxDistance);
+
+		return maxDistance;
+	}
+
+	private boolean findWallAhead() {
+		// Get the robot's current position and direction
+		int[] positionData = getPosition();
+
+		int x = positionData[0];
+		int y = positionData[1];
+		int direction = positionData[2];
+		
 		char[][] mapCopy = map.getGrid();
 
 		// Get the coordinates of the supposed wall
@@ -213,113 +266,6 @@ public class MobileRobotAI implements Runnable {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Returns the amount of steps that the robot can move
-	 * 
-	 * @param forwardSpace
-	 *            the free space in front of th robot.
-	 * @return
-	 */
-	private int getSteps(int phase) {
-		// Get the robot's current position and direction
-		int[] positionData = getPosition();
-
-		int x = positionData[0];
-		int y = positionData[1];
-		int direction = positionData[2];
-
-		// Get the position to the right
-		int directionToRight = getDirectionToRight();
-
-		// Get the coordinates of the supposed wall
-		int[] wallCoordinates = getWallCoordinates(x, y, directionToRight);
-
-		int xRight = wallCoordinates[0];
-		int yRight = wallCoordinates[1];
-
-		boolean stopForward = false;
-		boolean stopRight = false;
-
-		int maxDistance = 0;
-		int i = 1;
-
-		// Check the maximum forward distance
-		while (i <= LASER_RANGE && !stopForward) {
-			// Get the block of this position
-			char blockForward = getDistanceForward(x, y, direction, i);
-
-			System.out.println("Forward scan - Found char: " + blockForward);
-
-			// Block is either an obstacle or unknown
-			if (blockForward == map.getObstacle()
-					|| blockForward == map.getUnknown()) {
-				i--;
-				System.out.println("Forward scan - Found wall/unknown: " + i);
-				maxDistance = i - WALL_DISTANCE;
-				System.out.println("Forward scan - Max distance: "
-						+ maxDistance);
-				stopForward = true;
-			}
-
-			// Reached the end of the loop
-			if (i == LASER_RANGE && maxDistance == 0) {
-				maxDistance = i - WALL_DISTANCE;
-				stopForward = true;
-			}
-			i++;
-		}
-
-		if (phase == WALL) {
-			i = 0;
-
-			while (i <= LASER_RANGE && !stopRight) {
-				// Get the block of this position
-				char blockRight = getDistanceRight(xRight, yRight, direction, i);
-
-				System.out.println("Right scan - Found char: " + blockRight);
-
-				// Check if the block's content is empty
-				if (blockRight == map.getEmpty()) {
-					i--;
-					if (i < maxDistance) {
-						maxDistance = i;
-					}
-					stopRight = true;
-				}
-
-				// Reached the end of the loop
-				if (i == LASER_RANGE && maxDistance == 0) {
-					stopRight = true;
-				}
-				i++;
-			}
-		}
-		System.out.println("Distance (steps) to travel: " + maxDistance);
-
-		return maxDistance;
-	}
-	
-	/**
-	 * Maneuvers the robot around a corner of the wall
-	 */
-	private void turnAroundWall() {
-		try {
-			// Go WALL_DISTANCE forward
-			moveForward(WALL_DISTANCE + 1);
-
-			// Rotate right
-			rotate(ROTATE_RIGHT);
-
-			// Scan laser
-			scanLaser();
-
-			// Go WALL_DISTANCE + 1 forward
-			moveForward(WALL_DISTANCE + 1);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
 	}
 
 	private void parsePosition(String value, double position[]) {
@@ -341,21 +287,21 @@ public class MobileRobotAI implements Runnable {
 		parameter = value.substring(indexInit + 4);
 		int direction = (int) Math.round(Double.parseDouble(parameter));
 		switch (direction) {
-		case 0:
-			position[2] = Double.parseDouble("360");
-			break;
-		case 360:
-			position[2] = Double.parseDouble("360");
-			break;
-		case 90:
-			position[2] = Double.parseDouble("90");
-			break;
-		case 180:
-			position[2] = Double.parseDouble("180");
-			break;
-		case 270:
-			position[2] = Double.parseDouble("270");
-			break;
+			case 0:
+				position[2] = Double.parseDouble("360");
+				break;
+			case 360:
+				position[2] = Double.parseDouble("360");
+				break;
+			case 90:
+				position[2] = Double.parseDouble("90");
+				break;
+			case 180:
+				position[2] = Double.parseDouble("180");
+				break;
+			case 270:
+				position[2] = Double.parseDouble("270");
+				break;		
 		}
 	}
 
@@ -457,13 +403,13 @@ public class MobileRobotAI implements Runnable {
 	 */
 	private int getDirectionToRight() {
 		int directionToRight = (int) Math.round(position[2]);
-
+		
 		if (directionToRight == 360) {
 			directionToRight = 90;
 		} else {
 			directionToRight += 90;
 		}
-
+		
 		return directionToRight;
 	}
 
@@ -479,7 +425,7 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	/**
-	 * Returns the coordinates from the wall right of the robot
+	 * Returns the coordinates from the wall
 	 * 
 	 * @param x
 	 * @param y
@@ -510,69 +456,49 @@ public class MobileRobotAI implements Runnable {
 		return wallCoordinates;
 	}
 
-	/**
-	 * Returns the current character on the OccupancyMap for the position in
-	 * front of the robot
-	 * 
-	 * @param x
-	 * @param y
-	 * @param direction
-	 * @param i
-	 * @return
-	 */
 	private char getDistanceForward(int x, int y, int direction, int i) {
 		char distance = 0;
 		char[][] mapCopy = map.getGrid();
 
 		try {
 			switch (direction) {
-			case TOP:
-				distance = mapCopy[x][y - i];
-				break;
-			case RIGHT:
-				distance = mapCopy[x + i][y];
-				break;
-			case BOTTOM:
-				distance = mapCopy[x][y + i];
-				break;
-			case LEFT:
-				distance = mapCopy[x - i][y];
-				break;
+				case TOP:
+					distance = mapCopy[x][y - i];
+					break;
+				case RIGHT:
+					distance = mapCopy[x + i][y];
+					break;
+				case BOTTOM:
+					distance = mapCopy[x][y + i];
+					break;
+				case LEFT:
+					distance = mapCopy[x - i][y];
+					break;
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Array out of bounds error, still continuing.");
 		}
 		return distance;
 	}
-
-	/**
-	 * Returns the current character on the OccupancyMap for the position of the
-	 * wall right of the robot
-	 * 
-	 * @param x
-	 * @param y
-	 * @param direction
-	 * @param i
-	 * @return
-	 */
+	
 	private char getDistanceRight(int x, int y, int direction, int i) {
 		char distance = 0;
 		char[][] mapCopy = map.getGrid();
 
 		try {
 			switch (direction) {
-			case TOP:
-				distance = mapCopy[x][y - i];
-				break;
-			case RIGHT:
-				distance = mapCopy[x + i][y];
-				break;
-			case BOTTOM:
-				distance = mapCopy[x][y + i];
-				break;
-			case LEFT:
-				distance = mapCopy[x - i][y];
-				break;
+				case TOP:
+					distance = mapCopy[x][y - i];
+					break;
+				case RIGHT:
+					distance = mapCopy[x + i][y];
+					break;
+				case BOTTOM:
+					distance = mapCopy[x][y + i];
+					break;
+				case LEFT:
+					distance = mapCopy[x - i][y];
+					break;
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Array out of bounds error, still continuing.");
@@ -580,11 +506,8 @@ public class MobileRobotAI implements Runnable {
 		return distance;
 	}
 
-	/**
-	 * Checks if the environment is explored
-	 * 
-	 * @return
-	 */
+	// EXPLORED THINGS
+	// TODO
 	private boolean isExplored() {
 		// Ga over het hele bord als een unknown aan een empty grenst dan return
 		// false, aan het einde return true;
@@ -602,6 +525,7 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	private boolean bordersCard(int row, int column, char cardChar) {
+		// TODO
 		if (isValidRow(row - 1)) {
 			if (map.getGrid()[row - 1][column] != 0) {
 				// System.out.println(map.getGrid()[row -
@@ -640,7 +564,7 @@ public class MobileRobotAI implements Runnable {
 		return false;
 	}
 
-	// Checks if row is on the the board
+	// checks if row is on the the board
 	private boolean isValidRow(int row) {
 		if (row < 0) {
 			return false;
@@ -651,7 +575,7 @@ public class MobileRobotAI implements Runnable {
 		return true;
 	}
 
-	// Checks if column is on the the board
+	// checks if column is on the the board
 	private boolean isValidColumn(int column) {
 
 		if (column < 0) {
