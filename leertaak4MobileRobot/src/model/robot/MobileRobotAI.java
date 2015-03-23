@@ -463,7 +463,7 @@ public class MobileRobotAI implements Runnable {
 
 		int x = ((int) Math.round(position[0]) / 10);
 		int y = ((int) Math.round(position[1]) / 10);
-		int direction = (int) Math.round(position[2]);
+		int direction = (int) Math.ceil(position[2]);
 
 		positions[0] = x;
 		positions[1] = y;
