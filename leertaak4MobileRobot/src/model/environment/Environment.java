@@ -18,8 +18,6 @@ import java.util.ArrayList;
  * @author Davide Brugali       (2002)
  * @version 2.0
  */
-
-@SuppressWarnings("serial")
 public class Environment {
 	private final ArrayList<Obstacle> obstacles;
 	private final MobileRobot robot;

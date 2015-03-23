@@ -23,13 +23,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public abstract class Device implements Runnable {
-
-
-
+	
 	// A final object to make sure the lock cannot be overwritten with another Object
 	private final Object lock = new Object();
   	private final String name;                    // the name of this device
-	private final Polygon shape;                  // the device's shape in local coords
+	protected final Polygon shape;                  // the device's shape in local coords
 
     // a reference to the environment
     protected final Environment environment;
@@ -58,7 +56,6 @@ public abstract class Device implements Runnable {
 		this.robot = robot;
 		this.localPosition = local;
 		this.environment = environment;
-
 
 		this.shape = new Polygon();
 		this.robotPosition = new Position();

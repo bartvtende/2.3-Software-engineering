@@ -34,9 +34,9 @@ public class OccupancyMap {
 	private final ArrayList<ActionListener> actionListenerList;
 	private Environment environment;
 
-
 	public OccupancyMap() {
-		this.grid = new char[MAP_WIDTH / CELL_DIMENSION][MAP_HEIGHT / CELL_DIMENSION];
+		this.grid = new char[MAP_WIDTH / CELL_DIMENSION][MAP_HEIGHT
+				/ CELL_DIMENSION];
 
 		for (int i = 0; i < MAP_WIDTH / CELL_DIMENSION; i++) {
 			for (int j = 0; j < MAP_HEIGHT / CELL_DIMENSION; j++) {
@@ -48,8 +48,10 @@ public class OccupancyMap {
 	}
 
 	public void drawLaserScan(double position[], double measures[]) {
-		double rx = Math.round(position[0] + 20.0 * Math.cos(Math.toRadians(position[2])));
-		double ry = Math.round(position[1] + 20.0 * Math.sin(Math.toRadians(position[2])));
+		double rx = Math.round(position[0] + 20.0
+				* Math.cos(Math.toRadians(position[2])));
+		double ry = Math.round(position[1] + 20.0
+				* Math.sin(Math.toRadians(position[2])));
 		int dir = (int) Math.round(position[2]);
 
 		for (int i = 0; i < 360; i++) {
@@ -58,8 +60,10 @@ public class OccupancyMap {
 				d += 360;
 			while (d >= 360)
 				d -= 360;
-			double fx = Math.round(rx + measures[d] * Math.cos(Math.toRadians(i)));
-			double fy = Math.round(ry + measures[d] * Math.sin(Math.toRadians(i)));
+			double fx = Math.round(rx + measures[d]
+					* Math.cos(Math.toRadians(i)));
+			double fy = Math.round(ry + measures[d]
+					* Math.sin(Math.toRadians(i)));
 
 			if (measures[d] < 100) {
 				drawLaserBeam(rx, ry, fx, fy, true);
@@ -68,23 +72,28 @@ public class OccupancyMap {
 			}
 		}
 
-		//paint robot position on grid
-		Position robotPos = environment.getRobot().getPlatform().getRobotPosition();
-		//environment.getRobot().readPosition(robotPos);
+		// paint robot position on grid
+		Position robotPos = environment.getRobot().getPlatform()
+				.getRobotPosition();
+		// environment.getRobot().readPosition(robotPos);
 
 		int robotX = (int) robotPos.getX() / CELL_DIMENSION;
 		int robotY = (int) robotPos.getY() / CELL_DIMENSION;
 		this.grid[robotX][robotY] = ROBOT;
 
-
-		this.processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+		this.processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				null));
 	}
 
+	public void drawSonarScan(double position[], double measures[]) { // TODO:?????
+		// TODO: Draw implementation
+	}
 
 	/**
 	 * This method allows other objects to register as ActionListeners.
 	 *
-	 * @param listener the ActionListener to add to the watchlist
+	 * @param listener
+	 *            the ActionListener to add to the watchlist
 	 */
 	public void addActionListener(ActionListener listener) {
 		this.actionListenerList.add(listener);
@@ -93,9 +102,11 @@ public class OccupancyMap {
 	}
 
 	/**
-	 * This method will remove the given ActionListener from the registered ActionListeners.
+	 * This method will remove the given ActionListener from the registered
+	 * ActionListeners.
 	 *
-	 * @param listener the ActionListener to remove from the watchlist
+	 * @param listener
+	 *            the ActionListener to remove from the watchlist
 	 */
 	public void removeActionListener(ActionListener listener) {
 		if (actionListenerList.contains(listener)) {
@@ -106,7 +117,8 @@ public class OccupancyMap {
 	/**
 	 * This method is intended to notify all ActionListeners of a event.
 	 *
-	 * @param event the event to be processed
+	 * @param event
+	 *            the event to be processed
 	 */
 	public void processEvent(ActionEvent event) {
 
@@ -147,13 +159,15 @@ public class OccupancyMap {
 		this.environment = environment;
 	}
 
-	private void drawLaserBeam(double rx, double ry, double x, double y, boolean obstacle) {
+	private void drawLaserBeam(double rx, double ry, double x, double y,
+			boolean obstacle) {
 		int rxi = (int) Math.ceil(rx / CELL_DIMENSION);
 		int ryj = (int) Math.ceil(ry / CELL_DIMENSION);
 		int xi = (int) Math.ceil(x / CELL_DIMENSION);
 		int yj = (int) Math.ceil(y / CELL_DIMENSION);
 
-		if (xi < 0 || yj < 0 || xi >= MAP_WIDTH / CELL_DIMENSION || yj >= MAP_HEIGHT / CELL_DIMENSION)
+		if (xi < 0 || yj < 0 || xi >= MAP_WIDTH / CELL_DIMENSION
+				|| yj >= MAP_HEIGHT / CELL_DIMENSION)
 			return;
 
 		if (obstacle) {
@@ -176,7 +190,8 @@ public class OccupancyMap {
 			double m = (y - ry) / (x - rx);
 			double q = y - m * x;
 			for (int i = xmin; i <= xmax; i++) {
-				int h = (int) Math.ceil((m * (i * CELL_DIMENSION) + q) / CELL_DIMENSION);
+				int h = (int) Math.ceil((m * (i * CELL_DIMENSION) + q)
+						/ CELL_DIMENSION);
 				if (h >= ymin && h <= ymax) {
 					if (grid[i][h] != OBSTACLE)
 						grid[i][h] = EMPTY;
@@ -185,5 +200,4 @@ public class OccupancyMap {
 			}
 		}
 	}
-
 }

@@ -24,8 +24,7 @@ import java.util.StringTokenizer;
 public class MobileRobotAI implements Runnable {
 
 	private static final int WALL_DISTANCE = 2;
-
-	private static final int LASER_RANGE = 10;
+	private static final int SCAN_RANGE = 10;
 
 	private static final int TOP = 270;
 	private static final int RIGHT = 360;
@@ -80,9 +79,10 @@ public class MobileRobotAI implements Runnable {
 
 				robot.setOutput(output);
 
-				// Step 1: Scan the surroundings with the laser and save the
-				// results
+				// Step 1: Scan the surroundings with the laser and sonar and
+				// save the results
 				scanLaser();
+				scanSonar();
 
 				// Step 2: Check if the exploration is just beginning
 				while (begin) {
@@ -246,7 +246,7 @@ public class MobileRobotAI implements Runnable {
 		int i = 1;
 
 		// Check the maximum forward distance
-		while (i <= LASER_RANGE && !stopForward) {
+		while (i <= SCAN_RANGE && !stopForward) {
 			// Get the block of this position
 			char blockForward = getDistanceForward(x, y, direction, i);
 
@@ -264,7 +264,7 @@ public class MobileRobotAI implements Runnable {
 			}
 
 			// Reached the end of the loop
-			if (i == LASER_RANGE && maxDistance == 0) {
+			if (i == SCAN_RANGE && maxDistance == 0) {
 				maxDistance = i - WALL_DISTANCE;
 				stopForward = true;
 			}
@@ -274,7 +274,7 @@ public class MobileRobotAI implements Runnable {
 		if (phase == WALL) {
 			i = 0;
 
-			while (i <= LASER_RANGE && !stopRight) {
+			while (i <= SCAN_RANGE && !stopRight) {
 				// Get the block of this position
 				char blockRight = getDistanceRight(xRight, yRight, direction, i);
 
@@ -290,7 +290,7 @@ public class MobileRobotAI implements Runnable {
 				}
 
 				// Reached the end of the loop
-				if (i == LASER_RANGE && maxDistance == 0) {
+				if (i == SCAN_RANGE && maxDistance == 0) {
 					stopRight = true;
 				}
 				i++;
@@ -300,7 +300,7 @@ public class MobileRobotAI implements Runnable {
 
 		return maxDistance;
 	}
-	
+
 	/**
 	 * Maneuvers the robot around a corner of the wall
 	 */
@@ -387,7 +387,7 @@ public class MobileRobotAI implements Runnable {
 	}
 
 	/**
-	 * Gets the position of the robot and scans the environment.
+	 * Gets the position of the robot and scans the environment with laser.
 	 * 
 	 * @throws IOException
 	 */
@@ -400,6 +400,27 @@ public class MobileRobotAI implements Runnable {
 		result = input.readLine();
 		parseMeasures(result, measures);
 		map.drawLaserScan(position, measures);
+
+		// Transform 0 into 360
+		if (Math.round(position[2]) == 0) {
+			position[2] = RIGHT;
+		}
+	}
+
+	/**
+	 * Gets the position of the robot and scans the environment with sonar.
+	 * 
+	 * @throws IOException
+	 */
+	private void scanSonar() throws IOException {
+		robot.sendCommand("R1.GETPOS");
+		this.result = input.readLine();
+		parsePosition(result, position);
+
+		robot.sendCommand("S1.SCAN");
+		result = input.readLine();
+		parseMeasures(result, measures);
+		map.drawSonarScan(position, measures);
 
 		// Transform 0 into 360
 		if (Math.round(position[2]) == 0) {
