@@ -381,7 +381,7 @@ public class MobileRobotAIOld implements Runnable {
 		robot.sendCommand("L1.SCAN");
 		result = input.readLine();
 		parseMeasures(result, measures);
-		map.drawLaserScan(position, measures);
+		map.drawScan(position, measures);
 
 		// Transform 0 into 360
 		if (Math.round(position[2]) == 0) {

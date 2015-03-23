@@ -47,7 +47,7 @@ public class OccupancyMap {
 		this.actionListenerList = new ArrayList<ActionListener>();
 	}
 
-	public void drawLaserScan(double position[], double measures[]) {
+	public void drawScan(double position[], double measures[]) {
 		double rx = Math.round(position[0] + 20.0
 				* Math.cos(Math.toRadians(position[2])));
 		double ry = Math.round(position[1] + 20.0
@@ -66,9 +66,9 @@ public class OccupancyMap {
 					* Math.sin(Math.toRadians(i)));
 
 			if (measures[d] < 100) {
-				drawLaserBeam(rx, ry, fx, fy, true);
+				drawBeam(rx, ry, fx, fy, true);
 			} else {
-				drawLaserBeam(rx, ry, fx, fy, false);
+				drawBeam(rx, ry, fx, fy, false);
 			}
 		}
 
@@ -83,10 +83,6 @@ public class OccupancyMap {
 
 		this.processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
 				null));
-	}
-
-	public void drawSonarScan(double position[], double measures[]) { // TODO:?????
-		// TODO: Draw implementation
 	}
 
 	/**
@@ -159,7 +155,7 @@ public class OccupancyMap {
 		this.environment = environment;
 	}
 
-	private void drawLaserBeam(double rx, double ry, double x, double y,
+	private void drawBeam(double rx, double ry, double x, double y,
 			boolean obstacle) {
 		int rxi = (int) Math.ceil(rx / CELL_DIMENSION);
 		int ryj = (int) Math.ceil(ry / CELL_DIMENSION);
