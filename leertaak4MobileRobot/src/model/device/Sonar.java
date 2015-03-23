@@ -2,7 +2,6 @@ package model.device;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 import model.environment.Environment;
 import model.environment.Obstacle;

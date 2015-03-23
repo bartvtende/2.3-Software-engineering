@@ -47,11 +47,10 @@ public class MobileRobot {
 		this.position = new Position(x, y, Math.toRadians(t));
 		this.platform = new Platform("P1", this, environment);
 		this.sensors.add(new Laser("L1", this, new Position(20.0, 0.0, 0.0), environment));
-        this.sensors.add(new Sonar("S1", this, new Position(10.0, 0.0, 0.0), environment));
+        this.sensors.add(new Sonar("S1", this, new Position(20.0, 0.0, 0.0), environment));
 		delay = 50;
 
 		this.intelligence = new MobileRobotAI(this,map);
-
 	}
 
 	public void readPosition(Position position) {
@@ -78,9 +77,6 @@ public class MobileRobot {
 
 		}
 		this.executor.execute(this.intelligence);
-
-
-
 	}
 
 	public void quit(){
@@ -120,17 +116,6 @@ public class MobileRobot {
 		for (Device sensor : sensors) {
 			sensor.setOutput(output);
 		}
-	}
-
-
-	public void test() {
-//		platform.start();
-//		platform.println("P1.MOVEFW 50");
-//		platform.println("P1.ROTATERIGHT 45");
-//		platform.println("P1.MOVEFW 100");
-		Laser laser = (Laser) sensors.get(0);
-//		laser.start();
-		laser.sendCommand("L1.SCAN");
 	}
 
 	public Platform getPlatform() {

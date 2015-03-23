@@ -1,14 +1,14 @@
 package model.robot;
 
-import model.virtualmap.OccupancyMap;
-
-import java.io.PipedInputStream;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.PipedOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintWriter;
 import java.util.StringTokenizer;
+
+import model.virtualmap.OccupancyMap;
 
 /**
  * Title : The Mobile Robot Explorer Simulation Environment v2.0 Copyright: GNU
