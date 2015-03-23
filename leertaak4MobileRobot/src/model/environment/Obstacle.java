@@ -49,7 +49,6 @@ public class Obstacle {
 
 		this.opaqueBackgroundColor = Obstacle.STANDARD_OPAQUE_BACKGROUND_COLOR;
 		this.opaqueForegroundColor = Obstacle.STANDARD_OPAQUE_FOREGROUND_COLOR;
-
 	}
 
 
@@ -94,7 +93,6 @@ public class Obstacle {
 		}
 		return false;
 	}
-
 
 	public String toString() {
 		String xml = "  <OBSTACLE NAME=" + '"' + name + '"' +
