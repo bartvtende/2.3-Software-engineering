@@ -91,6 +91,7 @@ public class MobileRobotAI implements Runnable {
 						// Go forward until we scan a wall forward
 						moveForward(getSteps(BEGIN));
 						scanLaser();
+						scanSonar();
 					} else {
 						System.out.println("Ending begin state - turn left");
 						// Turn left
@@ -314,6 +315,7 @@ public class MobileRobotAI implements Runnable {
 
 			// Scan laser
 			scanLaser();
+			scanSonar();
 
 			// Go WALL_DISTANCE + 1 forward
 			moveForward(WALL_DISTANCE + 1);
