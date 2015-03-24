@@ -137,4 +137,8 @@ public abstract class ScanDevice extends Device {
 			}
 		}
 	}
+	
+	public int getRange(){
+		return RANGE;
+	}
 }
