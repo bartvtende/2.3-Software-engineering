@@ -479,7 +479,7 @@ public class MobileRobotAI implements Runnable {
 	 * @return
 	 */
 	private int getDirectionToRight() {
-		int directionToRight = (int) Math.round(position[2]);
+		int directionToRight = (int) Math.ceil(position[2]);
 
 		if (directionToRight == 360) {
 			directionToRight = 90;

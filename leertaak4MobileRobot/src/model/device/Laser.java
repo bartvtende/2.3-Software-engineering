@@ -62,7 +62,7 @@ public class Laser extends ScanDevice {
 			this.executingCommand = true;
 		} else if (command.equalsIgnoreCase("READ")) {
 			writeOut("t=" + Double.toString(this.localPosition.getT()) + " d="
-					+ Double.toString(this.read(true, false)));
+					+ Double.toString(this.read(true)));
 			// ??????????????
 		} else if (command.equalsIgnoreCase("SCAN")) {
 			this.rotStep = 1.0;
@@ -110,7 +110,7 @@ public class Laser extends ScanDevice {
 	}
 
 	@Override
-	public double read(boolean first, boolean opaque) {
+	public double read(boolean first) {
 		Point2D centre = new Point2D.Double(localPosition.getX(),
 				localPosition.getY());
 		Point2D front = new Point2D.Double(localPosition.getX() + RANGE

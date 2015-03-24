@@ -40,7 +40,7 @@ public abstract class ScanDevice extends Device {
 		this.scanMeasurements = new ArrayList<Measurement>();
 	}
 
-	public abstract double read(boolean first, boolean opaque);
+	public abstract double read(boolean first);
 
 	// receives the vertex coordinates of segment beam;
 	// if segment beam intersects an edge of this PhysicalShape, it returns
@@ -120,20 +120,20 @@ public abstract class ScanDevice extends Device {
 		}
 
 		if (detect) {
-			double distance = this.read(true, false);
+			double distance = this.read(true);
 			if (distance > -1.0) {
 				if (detectMeasure == null) {
 					detectMeasure = new Measurement(distance,
-							localPosition.getT()); // ?????????????
+							localPosition.getT());
 				} else if (detectMeasure.distance > distance) {
-					detectMeasure.set(distance, localPosition.getT()); // ????????????
+					detectMeasure.set(distance, localPosition.getT());
 				}
 			}
 		} else if (scan) {
-			double distance = this.read(false, false);
+			double distance = this.read(false);
 			if (distance > -1.0) {
 				scanMeasurements.add(new Measurement(distance, localPosition
-						.getT())); // ??????????????
+						.getT()));
 			}
 		}
 	}

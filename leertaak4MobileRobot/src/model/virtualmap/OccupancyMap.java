@@ -23,6 +23,7 @@ public class OccupancyMap {
 	private final char UNKNOWN = 'n';
 	private final char EMPTY = 'e';
 	private final char OBSTACLE = 'o';
+	private final char OPAQUE = 'q';
 	private final char ROBOT = 'r';
 
 	private final int CELL_DIMENSION = 10;

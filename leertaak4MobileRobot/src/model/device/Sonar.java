@@ -65,7 +65,7 @@ public class Sonar extends ScanDevice {
 			this.executingCommand = true;
 		} else if (command.equalsIgnoreCase("READ")) {
 			writeOut("t=" + Double.toString(this.localPosition.getT()) + " d="
-					+ Double.toString(this.read(true, true)));
+					+ Double.toString(this.read(true)));
 			// ??????????????
 		} else if (command.equalsIgnoreCase("SCAN")) {
 			this.rotStep = 1.0;
@@ -113,7 +113,7 @@ public class Sonar extends ScanDevice {
 	}
 
 	@Override
-	public double read(boolean first, boolean opaque) {
+	public double read(boolean first) {
 		Point2D centre = new Point2D.Double(localPosition.getX(), localPosition.getY());
         Point2D front = new Point2D.Double(localPosition.getX() + RANGE * Math.cos(localPosition.getT()),
                 localPosition.getY() + RANGE * Math.sin(localPosition.getT()));
