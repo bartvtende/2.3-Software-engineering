@@ -28,20 +28,22 @@ package gui.views;
  * @version 1.0
  */
 
-import model.device.Device;
-import model.device.ScanDevice;
-import model.environment.Environment;
-import model.environment.Obstacle;
-
-import javax.swing.*;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.swing.JPanel;
+
+import model.device.Device;
+import model.environment.Environment;
+import model.environment.Obstacle;
 
 
 public class SimulationView extends JPanel implements ActionListener {
@@ -105,35 +107,25 @@ public class SimulationView extends JPanel implements ActionListener {
 	}
 
 	private void paintDevice(Graphics g, Device d) {
-		
-		
-		if(d.getName()=="S1"){
-			model.getRobot().readPosition(d.getRobotPosition());
-			int range = 2* ((ScanDevice)d).getRange(); 
-				g.fillOval(new Double(d.getRobotPosition().getX()-0.5*range).intValue(), new Double(d.getRobotPosition().getY()-0.5*range).intValue(), range, range);
-			
+		// reads the robot's current position
+		model.getRobot().readPosition(d.getRobotPosition());
+		Polygon currentShape = d.getShape();
+		// draws the shape
+		Polygon globalShape = new Polygon();
+		Point2D point = new Point2D.Double();
+		for (int i = 0; i < currentShape.npoints; i++) {
+			point.setLocation(currentShape.xpoints[i], currentShape.ypoints[i]);
+			// calculates the coordinates of the point according to the local position
+			d.getLocalPosition().rotateAroundAxis(point);
+			// calculates the coordinates of the point according to the robot position
+			d.getRobotPosition().rotateAroundAxis(point);
+			// adds the point to the global shape
+			globalShape.addPoint((int) Math.round(point.getX()), (int) Math.round(point.getY()));
 		}
-		else{
-			// reads the robot's current position
-			model.getRobot().readPosition(d.getRobotPosition());
-			Polygon currentShape = d.getShape();
-			// draws the shape
-			Polygon globalShape = new Polygon();
-			Point2D point = new Point2D.Double();
-			for (int i = 0; i < currentShape.npoints; i++) {
-				point.setLocation(currentShape.xpoints[i], currentShape.ypoints[i]);
-				// calculates the coordinates of the point according to the local position
-				d.getLocalPosition().rotateAroundAxis(point);
-				// calculates the coordinates of the point according to the robot position
-				d.getRobotPosition().rotateAroundAxis(point);
-				// adds the point to the global shape
-				globalShape.addPoint((int) Math.round(point.getX()), (int) Math.round(point.getY()));
-			}
-			g.setColor(d.getBackgroundColor());
-			g.fillPolygon(globalShape);
-			g.setColor(d.getForegroundColor());
-			g.drawPolygon(globalShape);
-		}
+		g.setColor(d.getBackgroundColor());
+		g.fillPolygon(globalShape);
+		g.setColor(d.getForegroundColor());
+		g.drawPolygon(globalShape);
 	}
 
 

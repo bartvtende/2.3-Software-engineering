@@ -30,7 +30,7 @@ public class Sonar extends ScanDevice {
 		this.detect = false;
 		this.scan = false;
 
-		backgroundColor = Color.cyan;
+		backgroundColor = Color.green;
 		this.addPoint(0, 2);
 		this.addPoint(100, 2);
 		this.addPoint(100, -2);
